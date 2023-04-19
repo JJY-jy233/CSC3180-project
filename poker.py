@@ -167,28 +167,60 @@ class Game:
             player.score = scores
             if scores[0] > biggest_type:
                 biggest_type = scores[0]
-                
+        
+        # 最大牌型的玩家们
         winners = []
         for player in self.rest_players:
             if player.score[0] == biggest_type:
                 winners.append(player)
-                
+        
+        # 如果只有一个玩家具有最大牌型，独赢
         if len(winners) == 1:
             print(winners[0].name)
             self.end_game(winners[0])
             return
-        else: 
-            print("no")
-            return
-        high = []
-        for i in winners:
-            high.append(i.score[0])
-            
+
+        # 如果有多个玩家具有最大牌型，比较
+        r = len(winners[0].score[1])
+        for i in range(r):
+            high = -1   
+            j = 0     
+            while True:
+                if high < winners[j].score[1][i]:
+                    if high != -1:
+                        
+                        # 如果有一个牌比目前最大的牌大，清除winner里的人
+                        winners = winners[j:]
+                        j = 0
+                    high = winners[j].score[1][i]
+                    
+                # 如果后面的牌没有目前最大的牌大，排除出winners
+                elif high > winners[j].score[1][i]: 
+                    winners.remove(winners[j])
+                    j -= 1
+                    
+                # 如果只剩最后一个winner    
+                if len(winners) == 1:
+                    print(winners[0].name)
+                    self.end_game(winners[0])
+                    return
+                
+                # 遍历到最后一名玩家后 break
+                if winners[j] == winners[-1]:
+                    break                
+                j+=1
+        
+        # 还没有分出胜负，平分彩池
+        self.chop(winners)
+        print("chop")
+                
+                    
             
     def chop(self,winners:list[Player]) -> None:
         part_pot = self.pot / len(winners)
         for winner in winners:
             winner.money += part_pot
+            print(winner.name)
             
             
                 
@@ -239,6 +271,8 @@ class Game:
     def action(self) -> None:
         for i in self.players:
             self.pot += i.bet()
+            # update i matirx
+            
             
     def end_game(self,player:Player) -> None:
         player.money += self.pot
@@ -261,11 +295,11 @@ def oo(n1,n2):
     n2 += 2
 
 if __name__ == "__main__":
-    Jack = Player('Jack',1,300)
-    Bob = Player('Bob',2,350)
-    Amy = Player('Amy',3)
-    Cat = Player('Cat',4)
-    Dog = Player('Dog',5)
+    Jack = Player('2',1,300)
+    Bob = Player('1',2,350)
+    Amy = Player('3',3)
+    Cat = Player('4',4)
+    Dog = Player('5',5)
     players_list = [Jack,Bob,Amy]
     game = Game(players_list)
     game.delete_player(0)
@@ -274,8 +308,9 @@ if __name__ == "__main__":
     game.add_player(Dog)
     game.deal_card()
     for i in game.players:
+        print(i.name)
         display_hand(i.hand)
-        # print(i.hand)
+        
     game.deal_public_cards(3)
     display_hand(game.public_cards)
     game.deal_public_cards(1)
@@ -288,7 +323,6 @@ if __name__ == "__main__":
     for i in game.players:
         print(i.score)
         
-    # game.show_hand()
 
     
 
