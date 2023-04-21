@@ -58,20 +58,27 @@ class DecisionNode(Node):
     
 
 
-class CardNode:
+class EvalNode:
     def __init__(self,card_value:int) -> None:
         self.hand = card_value
         self.big = DecisionNode()
-        self.big.call = DecisionNode()
-        self.mid = DecisionNode()
+        # self.big.call = DecisionNode()
+        # self.mid = DecisionNode()
         self.small = DecisionNode()
+        this = self.big
+        for i in range(5):
+            this.call = EvalNode()
+            this = this.call 
+        for i in range(5):
+            this.check = EvalNode()
+            this = this.check
         pass
     
     
 class RootNode:
     def __init__(self) -> None:
         for i in range(169):
-            exec('self.n{} = CardNode({}) '.format(i,i))
+            exec('self.n{} = EvalNode({}) '.format(i,i))
         
         
     
