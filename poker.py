@@ -1,5 +1,6 @@
 import random
 from itertools import combinations
+import NodeClass
 
 def display_card(card_id:int) -> str:
     
@@ -129,6 +130,10 @@ class Player:
         # 
         return 0
     
+    def Raise(self,money:int) -> int:
+        
+        return 0
+    
     def check(self) -> None:
         return
     
@@ -137,10 +142,26 @@ class Player:
         self.hand.clear()
         return
     
+    def action(self) -> None:
+        
+        action_label = -1
+        # search tree
+        
+        if action_label == 0:
+            self.fold()
+        elif action_label == 1:
+            self.check()
+        elif action_label == 2:
+            self.bet(2)
+        else:
+            self.Raise(1)
+        
+        
+    
     def get_max_score(self) -> None:
         
         return
-    
+
 
 class Game:
 
@@ -157,6 +178,13 @@ class Game:
         self.pot = 0
         self.round = 0
         pass
+    
+    def is_terminal(self):
+        if len(self.rest_players) == 1:
+            return True
+        if self.round == 5:
+            return True
+        return False
     
 # not finished
     def show_hand(self) -> None:
@@ -295,6 +323,8 @@ def oo(n1,n2):
     n2 += 2
 
 if __name__ == "__main__":
+    
+    root = NodeClass.RootNode()
     Jack = Player('2',1,300)
     Bob = Player('1',2,350)
     Amy = Player('3',3)
@@ -322,6 +352,9 @@ if __name__ == "__main__":
     game.show_hand()
     for i in game.players:
         print(i.score)
+        
+    # int("-------------------------------------------------------------------------------------------------------")
+        
         
 
     
