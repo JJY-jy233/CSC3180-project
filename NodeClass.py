@@ -1,9 +1,5 @@
-# import os
-# 目前手牌大小
-# def get_card_value():
+import pickle
 
-
-#     return
 
 class ResultNode:
     def __init__(self):
@@ -117,12 +113,63 @@ class RootNode:
                         for m in range(len(self.nodes[i].decisions[t].decisions[j].decisions)):
                             self.nodes[i].decisions[t].decisions[j].decisions[n].decisions[m].util = new_node
 
+    def store_p(self):
+        with open('decision_data.pkl', 'wb') as f:
+            for i in range(169):
+                pickle.dump(self.nodes[i].decisions_p, f)
+            for i in range(169):
+                for t in range(len(self.nodes[i].decisions)):
+                    pickle.dump(self.nodes[i].decisions[t].decisions_p, f)
+            for i in range(169):
+                for t in range(len(self.nodes[i].decisions)):
+                    for j in range(len(self.nodes[i].decisions[t].decisions)):
+                        pickle.dump(
+                            self.nodes[i].decisions[t].decisions[j].decisions_p, f)
+            for i in range(169):
+                for t in range(len(self.nodes[i].decisions)):
+                    for j in range(len(self.nodes[i].decisions[t].decisions)):
+                        for n in range(len(self.nodes[i].decisions[t].decisions[j].decisions)):
+                            pickle.dump(
+                                self.nodes[i].decisions[t].decisions[j].decisions[n].decisions_p, f)
 
-# class Tree:
-#     def __init__(self):
-#         root = RootNode
-#         pass
-root = RootNode()
+    def read_p(self):
+        with open('decision_data.pkl', 'rb') as f:
+            for i in range(169):
+                self.nodes[i].decision_p = pickle.load(f)
+            for i in range(169):
+                for t in range(len(self.nodes[i].decisions)):
+                    self.nodes[i].decisions[t].decisions_p = pickle.load(f)
+            for i in range(169):
+                for t in range(len(self.nodes[i].decisions)):
+                    for j in range(len(self.nodes[i].decisions[t].decisions)):
+                        self.nodes[i].decisions[t].decisions[j].decisions_p = pickle.load(f)
+            for i in range(169):
+                for t in range(len(self.nodes[i].decisions)):
+                    for j in range(len(self.nodes[i].decisions[t].decisions)):
+                        for n in range(len(self.nodes[i].decisions[t].decisions[j].decisions)):
+                            self.nodes[i].decisions[t].decisions[j].decisions[n].decisions_p = pickle.load(f)
 
-print(
-    root.nodes[168].decisions[0].decisions[0].decisions[0].decisions[0].util.value)
+
+# root = RootNode()
+# root.nodes[168].decisions[0].decisions[0].decisions[0].decisions_p[0]= 100
+# root.store_p()
+# root.read_p()
+# print(root.nodes[168].decisions[0].decisions[0].decisions[0].decisions_p)
+# root.nodes[0].decisions_p[1] = 1
+# root.nodes[1].decisions_p[1] = 2
+
+# print(
+#     root.nodes[168].decisions[0].decisions[0].decisions[0].decisions[0].util.value)
+
+# with open('decision_data.pkl', 'wb') as f:
+#         pickle.dump(root.nodes[0].decisions_p, f)
+#         pickle.dump(root.nodes[1].decisions_p, f)
+
+# with open('decision_data.pkl', 'rb') as f:
+#     data1 = pickle.load(f)
+#     data2 = pickle.load(f)
+
+# root.nodes[2]=data1
+
+# print(data1,data2,root.nodes[2])
+
