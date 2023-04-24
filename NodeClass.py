@@ -59,6 +59,8 @@ class DecisionNode(Node):
 
 
 class EvalNode:
+    
+    
     def __init__(self,card_value:int) -> None:
         self.hand = card_value
         self.big = DecisionNode()
@@ -66,13 +68,25 @@ class EvalNode:
         # self.mid = DecisionNode()
         self.small = DecisionNode()
         this = self.big
-        for i in range(5):
-            this.call = EvalNode()
-            this = this.call 
+        # for i in range(4):
+        this.call = EvalNode()
+        self.build_node(3)
+        this.check = EvalNode()
+        this.rs_1_3 = EvalNode()
+        this.rs_3_5 = EvalNode()
+        this.rs_5 = EvalNode()
+        
+            
         for i in range(5):
             this.check = EvalNode()
             this = this.check
         pass
+    
+    def build_node(self,count:int) ->None:
+        for i in range(count):
+            pass
+        pass
+    
     
     
 class RootNode:
