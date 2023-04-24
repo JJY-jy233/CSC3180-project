@@ -142,18 +142,18 @@ class Player:
         self.money -= bb
     
     # 没人下注时 第一个下注的人
-    def bet(self,money:int) -> int:
+    def bet(self,max_bet:int) -> int:
         # rand
-        bet_money = random.randint(1,30)
+        bet_money = random.randint(1,50)
         if self.money > bet_money:
             self.money -= bet_money
-            self.current_bet = bet_money
+            self.current_bet += bet_money
             # self.is_bet = True
             return bet_money
         else:
             allin = self.money
-            self.current_bet = allin
-            self.money = 0
+            self.current_bet += allin
+            # self.money = 0
             return -3 # allin
     
     # def call(self,money:int) -> int:
@@ -168,7 +168,7 @@ class Player:
         else:
             allin = self.money
             self.current_bet += allin
-            self.money = 0
+            # self.money = 0
             return -3
     
     def check(self) -> int:
@@ -185,7 +185,7 @@ class Player:
         else:
             allin = self.money
             self.current_bet += allin
-            self.money = 0
+            # self.money = 0
             return -3
     
 
@@ -202,19 +202,22 @@ class Player:
         
         # action_label = -1
         # search tree
-        
+        # step
+        self.tree
+        self.hand
+
         # action_label = self.tree
         # random.choice(["check","call",'asd'])
         
         
-        # # 没人下注的话，可以check和bet（一般不直接fold）
-        # if(max_bet==0):
-        #     action_label = random.choice([1,2])
+        # 没人下注的话，可以check和bet（一般不直接fold）S
+        if((max_bet - self.current_bet)==0):
+            action_label = random.choice([1,2])
             
-        # # 有人下注就不能check，只能fold，call，raise
-        # else:
-        #     action_label = random.choice([0,3,4])
-        action_label = int(input())
+        # 有人下注就不能check，只能fold，call，raise
+        else:
+            action_label = random.choice([0,3,4])
+        # action_label = 4
         
 
             
@@ -270,9 +273,11 @@ class Game:
 
     def show_hand(self) -> None:
         # allin的人
-        for i in self.allin:
-            self.rest_players.append(self.allin.pop())
         
+        for i in range(len(self.allin)):
+            self.rest_players.append(self.allin.pop(0))
+        
+        self.rest_players = list(set(self.rest_players))
         biggest_type = -1
         for player in self.rest_players:
             seven_cards = self.public_cards + player.hand
@@ -330,7 +335,10 @@ class Game:
                     
             
     def chop(self,winners:list[Player]) -> None:
+        # winners = list(set(winners))
         part_pot = self.pot / len(winners)
+        print(self.pot,"part",part_pot,"WINNER LEN",len(winners))
+        self.pot = 0
         for winner in winners:
             winner.money += part_pot
             print(winner.name,winner.score)
@@ -341,8 +349,8 @@ class Game:
     
     def new_game(self) -> None:
         # 换位置
-        if self.round != 0:
-            self.players.append(self.players.pop(0))
+        # if self.round != 0:
+        self.players.append(self.players.pop(0))
             
         # 洗牌
         random.shuffle(self.cards)
@@ -358,7 +366,7 @@ class Game:
         self.pot = 0
         self.public_cards = []
         # change position 
-        self.round = 0
+        # self.round = 0
         
     
     # 玩家进场 
@@ -404,19 +412,27 @@ class Game:
         # smallblinder = self.rest_players[0]
         last_p = self.rest_players[-1]
         check_last_p = self.rest_players[-1]
-        current_bet = 0
+        # current_bet = 0
+        max_bet = 0
         while len(self.rest_players) !=0:
             
             p = self.rest_players[i]
 
-            i+=1
+            
             
             # 玩家的下注量 可能是负数（fold：-2，check：-1）
-            player_bet = p.action(current_bet)
+            player_bet = p.action(max_bet)
             self.pot += max(0,player_bet)
             
+            # # 当前一轮最大下注筹码
+            # current_bet = max(player_bet,current_bet)
             # 当前一轮最大下注筹码
-            current_bet = max(player_bet,current_bet)
+            if player_bet > max_bet:
+                max_bet = player_bet
+                # 都allinle
+                if len(self.rest_players) == 0:
+                    break
+                last_p = self.rest_players[(i+len(self.rest_players)-1)%len(self.rest_players)]
             
             # 弃牌，
             if player_bet == -2:
@@ -425,10 +441,15 @@ class Game:
                 i-=1
             
             # allin
-            if player_bet == -3:
+            elif player_bet == -3:
                 self.rest_players.remove(p)
                 self.allin.append(p)
                 i-=1
+            
+            if(len(self.rest_players) == 1 and len(self.allin) == 0):
+                break
+            
+            
             
             # 到最后一个人说完话时，这一轮结束
             if p == last_p:
@@ -438,81 +459,83 @@ class Game:
             # check后，此玩家跳过，放到最后一个人说话
             if player_bet == -1:
                 # self.rest_players.append(self.rest_players.pop(0))
-                
-                # print(p.name,"check")
+
+                # 所有人check结束本回合
                 if check_last_p == p:
                     break
-                # check_count += 1
+
                 last_p = p
                 # i-=1
-                
+            i+=1   
             if i > (len(self.rest_players) - 1):
                 i = 0
-           
+            
             # update i matirx
         
-        # 恢复说话顺序
-        # if check_count != len(self.rest_players):
-        #     for i in range(check_count):
-        #         self.rest_players.insert(0,self.rest_players.pop())
             
             
     def action_first_round(self) -> None:
+        for i in self.rest_players:
+            i.current_bet = 0
         i = 2
         # smallblinder = self.rest_players[0]
         last_p = self.rest_players[1]
         self.rest_players[0].small_blind(self.smallblind)
         self.rest_players[1].big_blind(self.bigblind)
         check_last_p = self.rest_players[1]
-        bet_last_p = self.rest_players[1]
+        # last_talk_p = self.rest_players[1]
         self.pot = self.bigblind + self.smallblind
         max_bet = self.bigblind
         while len(self.rest_players) !=0:
             
             p = self.rest_players[i]
             
-            # 到最后一个人说完话时，这一轮结束
-            if p == last_p:
-                break
             # 玩家的下注量 可能是负数（fold：-2，check：-1）
             player_bet = p.action(max_bet)
             self.pot += max(0,player_bet)
+            
+             # 当前一轮最大下注筹码
+            if p.current_bet > max_bet:
+                max_bet = p.current_bet
+                if len(self.rest_players) == 0:
+                    break
+                last_p = self.rest_players[(i+len(self.rest_players)-1)%len(self.rest_players)]
+               
             
             # allin
             if player_bet == -3:
                 self.rest_players.remove(p)
                 self.allin.append(p)
+                self.pot += p.money
+                player_bet = p.current_bet
+                p.money = 0
                 i-=1
             # 弃牌，
             elif player_bet == -2:
                 self.rest_players.remove(p)
                 # print(p.name,"fold")
                 i-=1
-            
+                
+            if(len(self.rest_players) == 1 and len(self.allin) == 0):
+                break
+                
+                
             # 到最后一个人说完话时，这一轮结束
-            # if p == last_p:
-            #     break
-            
-            # 当前一轮最大下注筹码
-            if player_bet > max_bet:
-                max_bet = player_bet
-                last_p = p
+            if p == last_p:
+                break
             
             
             # check后，此玩家跳过，放到最后一个人说话
             if player_bet == -1:
                 # self.rest_players.append(self.rest_players.pop(0))
-                
-                # print(p.name,"check")
                 if check_last_p == p:
                     break
-                # check_count += 1
-                # last_p = p
+                last_p = p
                 # i-=1
-                
+            i+=1   
             if i > (len(self.rest_players) - 1):
                 i = 0
-            i+=1
+            
             # update i matirx
         
         # 恢复说话顺序
@@ -530,27 +553,30 @@ class Game:
     def one_play(self):
         # 洗牌，清空彩池
         self.new_game()
-        
+        if self.pot != 0:
+            print('1',self.pot)
         
         # 给每个玩家发手牌
         self.deal_card()
+        if self.pot != 0:
+            print('2',self.pot)
         
         # 第一轮下注
         self.action_first_round()
-        
-        print("第一轮")
-        
-        for i in self.rest_players:
-            print(i.name)
+    
         
         # 如果只剩一个玩家了，独赢
         if len(self.rest_players) == 1:
+            # if
             self.end_game(self.rest_players[0])
             return
-        if len(self.rest_players) == 0:
-            print("0",len(self.allin))
-            for i in self.players:
-                print(i.money)
+        elif len(self.rest_players) == 0 and len(self.allin) != 0:
+            self.deal_public_cards(3)
+            self.deal_public_cards(1)
+            self.deal_public_cards(1)
+            
+            self.show_hand()
+            return
         
         # 发三张公牌
         self.deal_public_cards(3)
@@ -558,14 +584,13 @@ class Game:
         # 第二轮下注
         self.action()
         
-        print("第2轮")
-        
-        for i in self.rest_players:
-            print(i.name)
-        
-        # 如果只剩一个玩家了，独赢
         if len(self.rest_players) == 1:
             self.end_game(self.rest_players[0])
+            return
+        elif len(self.rest_players) == 0 and len(self.allin) != 0:
+            self.deal_public_cards(1)
+            self.deal_public_cards(1)
+            self.show_hand()
             return
         
         # 发转牌
@@ -574,14 +599,12 @@ class Game:
         # 第三轮下注
         self.action()
         
-        print("第3轮")
-        
-        for i in self.rest_players:
-            print(i.name)
-        
-        # 如果只剩一个玩家了，独赢
         if len(self.rest_players) == 1:
             self.end_game(self.rest_players[0])
+            return
+        elif len(self.rest_players) == 0 and len(self.allin) != 0:
+            self.deal_public_cards(1)
+            self.show_hand()
             return
         
         # 发河牌
@@ -590,18 +613,16 @@ class Game:
         # 第四轮下注
         self.action()
         
-        print("第4轮")
-        
-        for i in self.rest_players:
-            print(i.name)
-        
-        # 如果只剩一个玩家了，独赢
         if len(self.rest_players) == 1:
             self.end_game(self.rest_players[0])
+            return
+        elif len(self.rest_players) == 0 and len(self.allin) != 0:
+            self.show_hand()
             return
         
         # show hand
         self.show_hand()
+        return
         
 
         
@@ -626,12 +647,12 @@ def oo(n1,n2):
 if __name__ == "__main__":
     
     # root = NodeClass.RootNode()
-    Jack = Player('1',1,100)
-    Bob = Player('2',2,100)
-    Amy = Player('3',3,100)
-    # Cat = Player('4',4,100)
-    # Dog = Player('5',5,100)
-    players_list = [Jack,Bob,Amy]
+    Jack = Player('1',1,400)
+    Bob = Player('2',2,400)
+    Amy = Player('3',3,400)
+    Cat = Player('4',4,400)
+    Dog = Player('5',5,400)
+    players_list = [Jack,Bob,Amy,Cat,Dog]
     game = Game(players_list)
     # game.delete_player(0)
     # game.add_player(Jack)
@@ -657,13 +678,17 @@ if __name__ == "__main__":
     #     print(i.score)
     s = time.time()
     i = 0
-    for i in range(1):
-        print("game: ",i)
+    for i in range(10):
+        if i > 0:
+            print("game: ",i)
         game.one_play()
         # time.sleep(3)
         i+=1
-    for i in game.players:
-        print(i.name,i.money)
+        sum = 0
+        for j in game.players:
+            sum += j.money
+        if(sum!=2000):
+            print(i,sum)
     e = time.time()
     print(e-s)
     # int("-------------------------------------------------------------------------------------------------------")
