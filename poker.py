@@ -165,7 +165,7 @@ class Player:
         
     def learn(self) -> None:
         # Update decision tree
-        self.tree.nodes[]
+        self.tree.nodes[self.hand_num]
         
         
         pass
@@ -315,10 +315,16 @@ class Player:
         
         return
 
-# class state:
-#     def __init__(self):
-#         self.allow_check = True
-#         pass
+class state:
+    def __init__(self):
+        self.legal_actions = []
+        self.max_bet = 0
+        pass
+    
+    def clear(self):
+        self.legal_actions = []
+        self.max_bet = 0
+        pass
     
 
 class Game:
