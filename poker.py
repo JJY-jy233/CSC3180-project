@@ -151,7 +151,7 @@ class Player:
         self.second_choice = None
         self.third_choice = None
         self.fourth_choice = None
-        
+        self.hand_num = None
         # self.is_fold = False
         # # self.is_bet = False
         # self.is_check = False
@@ -165,7 +165,7 @@ class Player:
         
     def learn(self) -> None:
         # Update decision tree
-        
+        self.tree.nodes[]
         
         
         pass
@@ -248,15 +248,15 @@ class Player:
         # search tree
         # step
         if round == 1:
-            num = eval_hand(self.hand)
-            self.p_l = self.tree.nodes[num].decisions_p
+           
+            self.p_l = self.tree.nodes[self.hand_num].decisions_p
         elif round == 2:
-            self.p_l = self.tree.nodes[num].decisions[self.first_choice].decisions_p
+            self.p_l = self.tree.nodes[self.hand_num].decisions[self.first_choice].decisions_p
         elif round == 3:
-            self.p_l = self.tree.nodes[num].decisions[self.first_choice].decisions[self.second_choice].decisions_p
+            self.p_l = self.tree.nodes[self.hand_num].decisions[self.first_choice].decisions[self.second_choice].decisions_p
             
         elif round == 4:
-            self.p_l = self.tree.nodes[num].decisions[self.first_choice].decisions[self.second_choice].decisions[self.third_choice].decisions_p
+            self.p_l = self.tree.nodes[self.hand_num].decisions[self.first_choice].decisions[self.second_choice].decisions[self.third_choice].decisions_p
             
         # print(self.p_l)
         
@@ -466,6 +466,8 @@ class Game:
                 if (len(self.rest_players[j].hand)) > 2:
                     print(self.rest_players[j].hand)
                 self.card_position += 1 
+        for k in range(self.players_num):
+            self.rest_players[k].hand_num = eval_hand(self.rest_players[k].hand)
         return
  
     # num：发几张公牌
