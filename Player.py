@@ -1,3 +1,9 @@
+import random
+import numpy as np
+import NodeClass
+from State import State
+
+
 class Player:
     def __init__(self,name:str,position:int,money:int = 10000,tree:NodeClass.RootNode = None,label = None) -> None:
         self.name = name
@@ -14,6 +20,11 @@ class Player:
         self.third_choice = None
         self.fourth_choice = None
         self.hand_num = None
+        self.first_state:State = None
+        self.second_state:State = None
+        
+        self.third_state:State = None
+        self.fourth_state:State = None
         # self.is_fold = False
         # # self.is_bet = False
         # self.is_check = False

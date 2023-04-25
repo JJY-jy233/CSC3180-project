@@ -2,7 +2,9 @@ import random
 import numpy as np
 from itertools import combinations
 import NodeClass
+from Player import Player
 import time
+from State import State
 def eval_hand(hand:list) -> int: #11 , 9 -> 1,3
     # l = [['AA','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s'],
     #      ['AKo','KK','KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s','K4s','K3s','K2s'],
@@ -136,195 +138,8 @@ def get_max_score(seven_cards:list) -> tuple:
             max_value = value
     return max_type, max_value
 
-class Player:
-    def __init__(self,name:str,position:int,money:int = 10000,tree:NodeClass.RootNode = None,label = None) -> None:
-        self.name = name
-        self.money = money
-        self.label = label
-        self.position = position
-        self.tree = tree
-        self.hand = []
-        self.score = None
-        self.current_bet = 0
-        self.p = None
-        self.first_choice = None
-        self.second_choice = None
-        self.third_choice = None
-        self.fourth_choice = None
-        self.hand_num = None
-        # self.is_fold = False
-        # # self.is_bet = False
-        # self.is_check = False
-        # self.allow_check = True
-        # self.state:state = None
-        pass
-    
-    def change_position(self) -> None:
-        # To change the position after one game
-        pass
-        
-    def learn(self) -> None:
-        # Update decision tree
-        self.tree.nodes[self.hand_num]
-        
-        
-        pass
-    
-    def small_blind(self,sb):
-        self.current_bet = sb
-        self.money -= sb
-        
-    def big_blind(self,bb):
-        self.current_bet = bb
-        self.money -= bb
-    
-    # 没人下注时 第一个下注的人
-    def bet(self,max_bet:int) -> int:
-        # rand
-        bet_money = random.randint(1,50)
-        if self.money > bet_money:
-            self.money -= bet_money
-            self.current_bet += bet_money
-            # self.is_bet = True
-            return bet_money
-        else:
-            allin = self.money
-            self.current_bet += allin
-            # self.money = 0
-            return -3 # allin
-    
-    # def call(self,money:int) -> int:
-    #     return money
-    
-    def Raise(self,max_bet:int,factors:int) -> int:
-        
-        if factors == 1:
-            coefficient = random.choice([2,3])
-        elif factors == 3:
-            coefficient = random.choice([4,5])
-        elif factors == 5:
-            coefficient = random.choice([6,7])
-        dif = coefficient * max_bet - self.current_bet
-        if self.money > dif:
-            self.money -= dif
-            self.current_bet += dif
-            return dif
-        else:
-            allin = self.money
-            self.current_bet += allin
-            # self.money = 0
-            return -3
-    
-    def check(self) -> int:
 
-        return -1
-    
-    def call(self,money:int) -> int:
-        # 补差码
-        dif = money - self.current_bet
-        if self.money > dif:
-            self.money -= dif
-            self.current_bet += dif
-            return dif
-        else:
-            allin = self.money
-            self.current_bet += allin
-            # self.money = 0
-            return -3
-    
 
-    def fold(self) -> float:
-        self.hand = []
-
-        return -2
-    
-    def new_game(self)->None:
-        pass
-        # self.tree 
-    
-    def action(self,max_bet,round) -> float:
-        
-        # action_label = -1
-        # search tree
-        # step
-        if round == 1:
-           
-            self.p_l = self.tree.nodes[self.hand_num].decisions_p
-        elif round == 2:
-            self.p_l = self.tree.nodes[self.hand_num].decisions[self.first_choice].decisions_p
-        elif round == 3:
-            self.p_l = self.tree.nodes[self.hand_num].decisions[self.first_choice].decisions[self.second_choice].decisions_p
-            
-        elif round == 4:
-            self.p_l = self.tree.nodes[self.hand_num].decisions[self.first_choice].decisions[self.second_choice].decisions[self.third_choice].decisions_p
-            
-        # print(self.p_l)
-        
-        # self.hand
-
-        # action_label = self.tree
-        # random.choice(["check","call",'asd'])
-        
-        np.random.seed(0)
-        # 没人下注的话，可以check和bet（一般不直接fold）S
-        if((max_bet - self.current_bet)==0):
-            sum = self.p_l[1] + self.p_l[3]
-            p = np.array([self.p_l[1] / sum, self.p_l[3] / sum])
-            action_label = np.random.choice([1,3] , p = p.ravel())
-            
-        # 有人下注就不能check，只能fold，call，raise
-        else:
-            sum = self.p_l[0] + self.p_l[2] + self.p_l[4] + self.p_l[5] + self.p_l[6]
-            p = np.array([self.p_l[0] / sum, self.p_l[2] / sum, self.p_l[4] / sum, self.p_l[5] / sum,self.p_l[6] / sum])
-            action_label = np.random.choice([0,2,4,5,6] , p = p.ravel())
-            # action_label = random.choice([0,3,4,5,6])
-        # action_label = 4
-        if round == 1:
-           
-            self.first_choice = action_label
-        elif round == 2:
-            self.second_choice = action_label
-
-        elif round == 3:
-            self.third_choice = action_label
-            
-        elif round == 4:
-            self.fourth_choice = action_label
-            
-            
-
-            
-        if action_label == 0:
-            money = self.fold()
-        elif action_label == 1:
-            money = self.check()
-        elif action_label == 2:
-            money = self.bet(2)
-        elif action_label == 3:  # call
-            money = self.call(max_bet)
-        elif action_label == 4:
-            money = self.Raise(max_bet,1)
-        elif action_label == 5:
-            money = self.Raise(max_bet,3)
-        elif action_label == 6:
-            money = self.Raise(max_bet,5)
-        return money
-        
-    
-    def get_max_score(self) -> None:
-        
-        return
-
-class state:
-    def __init__(self):
-        self.legal_actions = []
-        self.max_bet = 0
-        pass
-    
-    def clear(self):
-        self.legal_actions = []
-        self.max_bet = 0
-        pass
     
 
 class Game:
@@ -344,6 +159,12 @@ class Game:
         self.bigblind = bigblind
         self.smallblind = smallblind
         self.allin = []
+        self.states:list[State] = []
+        for i in range(4):
+            self.states.append(State())
+        for i in range(self.players_num):
+            for j in range(4):
+                self.players[i].states[j] = self.states[j]
         pass
     
     def is_terminal(self):
@@ -477,16 +298,22 @@ class Game:
         return
  
     # num：发几张公牌
-    def deal_public_cards(self,num:int) -> None:
+    def deal_public_cards(self,num:int,round:int) -> None:
         if num == 3:
             # 切一张牌
             self.card_position += 1
             for i in range(3):
                 self.public_cards.append(self.cards[self.card_position])
+                self.states[1].public_cards.append(self.cards[self.card_position])
                 self.card_position += 1
+            
         elif num == 1:
             self.card_position += 1
             self.public_cards.append(self.cards[self.card_position])
+            if round == 1:
+                self.states[2].public_cards = self.public_cards.copy()
+            elif round == 2:
+                self.states[3].public_cards = self.public_cards.copy()
             self.card_position += 1
         return
     
@@ -565,12 +392,25 @@ class Game:
         i = 2
         # smallblinder = self.rest_players[0]
         last_p = self.rest_players[1]
+        # 
         self.rest_players[0].small_blind(self.smallblind)
+        self.states[0].legal_actions.append(['fold','call','raise'])
+        self.states[0].player_actions.append(['bet'])
+        
+        
+        # 
         self.rest_players[1].big_blind(self.bigblind)
+        self.states[0].legal_actions.append(['raise'])
+        
         check_last_p = self.rest_players[1]
         # last_talk_p = self.rest_players[1]
         self.pot = self.bigblind + self.smallblind
+        self.states[0].round_pot += self.pot
+        
+        
         max_bet = self.bigblind
+        self.states[0].max_bet = max_bet
+        
         while len(self.rest_players) !=0:
             
             p = self.rest_players[i]
@@ -578,10 +418,14 @@ class Game:
             # 玩家的下注量 可能是负数（fold：-2，check：-1）
             player_bet = p.action(max_bet,1)
             self.pot += max(0,player_bet)
+            self.states[0].round_pot += max(0,player_bet)
+            
             
              # 当前一轮最大下注筹码
             if p.current_bet > max_bet:
                 max_bet = p.current_bet
+                self.states[0].max_bet = p.current_bet
+                
                 if len(self.rest_players) == 0:
                     break
                 last_p = self.rest_players[(i+len(self.rest_players)-1)%len(self.rest_players)]
@@ -665,7 +509,7 @@ class Game:
             return
         
         # 发三张公牌
-        self.deal_public_cards(3)
+        self.deal_public_cards(3,0)
         
         # 第二轮下注
         self.action(2)
@@ -680,7 +524,7 @@ class Game:
             return
         
         # 发转牌
-        self.deal_public_cards(1)
+        self.deal_public_cards(1,1)
         
         # 第三轮下注
         self.action(3)
@@ -694,7 +538,7 @@ class Game:
             return
         
         # 发河牌
-        self.deal_public_cards(1)
+        self.deal_public_cards(1,2)
         
         # 第四轮下注
         self.action(4)
