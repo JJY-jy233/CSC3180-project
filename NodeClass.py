@@ -31,19 +31,24 @@ class DecisionNode():
         self.rs_5_p = 0.04
         self.rs_5 = None
 
-        self.util = None
+        self.fold = None
+        self.util = 0
+
+
         self.over = False
         # by calling decisions[i] to decide which action to take
         # eg:decisions[0] means "check"
-        self.decisions = [self.check, self.call, self.bet,
+        self.decisions = [self.fold, self.check, self.call, self.bet,
                           self.rs_1_3, self.rs_3_5, self.rs_5]
         self.decisions_p = [self.fold_p, self.check_p, self.call_p,  self.bet_p,
                             self.rs_1_3_p, self.rs_3_5_p, self.rs_5_p]
         pass
 
     def extend_node(self, node):
-        for i in range(len(self.decisions)):
+        for i in range(1, len(self.decisions)):
             self.decisions[i] = node
+        util = ResultNode()
+        self.decisions[0] = util
         pass
 
     # def extend_resultnode(self, node):
@@ -91,31 +96,31 @@ class RootNode:
 
         for i in range(169):
             new_node = DecisionNode()
-            for t in range(len(self.nodes[i].decisions)):
+            for t in range(1, len(self.nodes[i].decisions)):
                 # create the dicisions after the second round
                 self.nodes[i].decisions[t].extend_node(new_node)
 
         for i in range(169):
             new_node = DecisionNode()
-            for t in range(len(self.nodes[i].decisions)):
-                for j in range(len(self.nodes[i].decisions[t].decisions)):
+            for t in range(1, len(self.nodes[i].decisions)):
+                for j in range(1, len(self.nodes[i].decisions[t].decisions)):
                     self.nodes[i].decisions[t].decisions[j].extend_node(
                         new_node)  # create the dicisions after the third round
 
         for i in range(169):
             new_node = DecisionNode()
-            for t in range(len(self.nodes[i].decisions)):
-                for j in range(len(self.nodes[i].decisions[t].decisions)):
-                    for n in range(len(self.nodes[i].decisions[t].decisions[j].decisions)):
+            for t in range(1,len(self.nodes[i].decisions)):
+                for j in range(1, len(self.nodes[i].decisions[t].decisions)):
+                    for n in range(1, len(self.nodes[i].decisions[t].decisions[j].decisions)):
                         self.nodes[i].decisions[t].decisions[j].decisions[n].extend_node(
                             new_node)  # create the dicisons after the fourth round
 
         for i in range(169):
             new_node = ResultNode()
-            for t in range(len(self.nodes[i].decisions)):
-                for j in range(len(self.nodes[i].decisions[t].decisions)):
-                    for n in range(len(self.nodes[i].decisions[t].decisions[j].decisions)):
-                        for m in range(len(self.nodes[i].decisions[t].decisions[j].decisions)):
+            for t in range(1, len(self.nodes[i].decisions)):
+                for j in range(1, len(self.nodes[i].decisions[t].decisions)):
+                    for n in range(1, len(self.nodes[i].decisions[t].decisions[j].decisions)):
+                        for m in range(1, len(self.nodes[i].decisions[t].decisions[j].decisions)):
                             self.nodes[i].decisions[t].decisions[j].decisions[n].decisions[m].util = new_node
 
     def store_p(self):
@@ -156,4 +161,5 @@ class RootNode:
                             self.nodes[i].decisions[t].decisions[j].decisions[n].decisions_p = pickle.load(
                                 f)
 
-
+root = RootNode()
+print(root.nodes[0].decisions[0].value)
