@@ -116,8 +116,23 @@ class Player:
         pass
         # self.tree 
     
-    def action(self,max_bet,round) -> float:
+    def action(self,max_bet,round,simulate = -1) -> float:
         
+        if simulate != -1:
+            if simulate == 0:
+                return self.fold()
+            elif simulate == 1:
+                return self.check()
+            elif simulate == 2:
+                return self.call(max_bet)
+            elif simulate == 3:
+                return self.bet(max_bet)
+            elif simulate == 4:
+                return self.Raise(max_bet,1)
+            elif simulate == 5:
+                return self.Raise(max_bet,3)
+            elif simulate == 6:
+                return self.Raise(max_bet,5)
         # action_label = -1
         # search tree
         # step
@@ -196,7 +211,7 @@ class Player:
         np.random.seed(0)
         # 没人下注的话，可以check和bet（一般不直接fold）S
         if((max_bet - self.current_bet)==0):
-            sum = self.p_l[1] * (0.75) + winrate *0.25 + self.p_l[3]
+            sum = self.p_l[1] + self.p_l[3] 
             p = np.array([self.p_l[1] / sum, self.p_l[3] / sum])
             action_label = np.random.choice([1,3] , p = p.ravel())
             
@@ -227,9 +242,9 @@ class Player:
         elif action_label == 1:
             money = self.check()
         elif action_label == 2:
-            money = self.bet(2)
-        elif action_label == 3:  # call
             money = self.call(max_bet)
+        elif action_label == 3:  # call
+            money = self.bet(2)
         elif action_label == 4:
             money = self.Raise(max_bet,1)
         elif action_label == 5:
@@ -242,3 +257,24 @@ class Player:
     def get_max_score(self) -> None:
         
         return
+
+# p_l = [0.2,0.2,0.2,0.2,0.1,0.06,0.04]
+# sum = p_l[0] + p_l[2] + p_l[4] + p_l[5] + p_l[6]
+# p = np.array([p_l[0] / sum, p_l[2] / sum, p_l[4] / sum, p_l[5] / sum,p_l[6] / sum])
+# z_count = 0
+# c_count = 0
+# r_count = 0
+
+
+
+# for i in range(100):    
+#     action_label = np.random.choice([0,2,4,5,6] , p = p.ravel())
+#     if action_label == 0:
+#         z_count += 1
+#     elif action_label == 2:
+#         c_count += 1
+#     else:
+#         r_count += 1
+
+# print(z_count,c_count,r_count)
+
