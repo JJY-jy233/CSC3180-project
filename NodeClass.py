@@ -52,13 +52,7 @@ class DecisionNode():
         pass
 
     def compute_value(self):
-        self.value = self.decisions[0].value * self.decisions_p[0] \
-        +self.decisions[1].value * self.decisions_p[1] \
-        +self.decisions[2].value * self.decisions_p[2] \
-        +self.decisions[3].value * self.decisions_p[3] \
-        +self.decisions[4].value * self.decisions_p[4] \
-        +self.decisions[5].value * self.decisions_p[5] \
-        +self.decisions[6].value * self.decisions_p[6] \
+        self.value = self.decisions[0].value * self.decisions_p[0] + self.decisions[1].value * self.decisions_p[1] + self.decisions[2].value * self.decisions_p[2] + self.decisions[3].value * self.decisions_p[3] + self.decisions[4].value * self.decisions_p[4] + self.decisions[5].value * self.decisions_p[5] + self.decisions[6].value * self.decisions_p[6] \
 
     # def extend_resultnode(self, node):
     #     for i in range(len(self.decisions)):
@@ -125,15 +119,14 @@ class RootNode:
                             new_node)  # create the dicisons after the fourth round
 
         for i in range(169):
-            new_node = ResultNode()
             for t in range(1, len(self.nodes[i].decisions)):
                 for j in range(1, len(self.nodes[i].decisions[t].decisions)):
                     for n in range(1, len(self.nodes[i].decisions[t].decisions[j].decisions)):
                         for m in range(1, len(self.nodes[i].decisions[t].decisions[j].decisions)):
+                            new_node = ResultNode()
                             self.nodes[i].decisions[t].decisions[j].decisions[n].decisions[m] = new_node
 
         for i in range(169):
-            new_node = DecisionNode()
             for t in range(1, len(self.nodes[i].decisions)):
                 for j in range(1, len(self.nodes[i].decisions[t].decisions)):
                     for n in range(1, len(self.nodes[i].decisions[t].decisions[j].decisions)):
@@ -141,13 +134,31 @@ class RootNode:
                         )
 
         for i in range(169):
-            new_node = DecisionNode()
             for t in range(1, len(self.nodes[i].decisions)):
                 for j in range(1, len(self.nodes[i].decisions[t].decisions)):
                     self.nodes[i].decisions[t].decisions[j].compute_value()
 
         for i in range(169):
-            new_node = DecisionNode()
+            for t in range(1, len(self.nodes[i].decisions)):
+                self.nodes[i].decisions[t].compute_value()
+
+        for i in range(169):
+            self.nodes[i].compute_value()
+
+    def update(self):
+        for i in range(169):
+            for t in range(1, len(self.nodes[i].decisions)):
+                for j in range(1, len(self.nodes[i].decisions[t].decisions)):
+                    for n in range(1, len(self.nodes[i].decisions[t].decisions[j].decisions)):
+                        self.nodes[i].decisions[t].decisions[j].decisions[n].compute_value(
+                        )
+
+        for i in range(169):
+            for t in range(1, len(self.nodes[i].decisions)):
+                for j in range(1, len(self.nodes[i].decisions[t].decisions)):
+                    self.nodes[i].decisions[t].decisions[j].compute_value()
+
+        for i in range(169):
             for t in range(1, len(self.nodes[i].decisions)):
                 self.nodes[i].decisions[t].compute_value()
 
@@ -192,3 +203,8 @@ class RootNode:
                             self.nodes[i].decisions[t].decisions[j].decisions[n].decisions_p = pickle.load(
                                 f)
 
+
+root = RootNode()
+root.nodes[10].decisions[1].decisions[1].decisions[1].decisions[1].value = 10
+root.update()
+print(root.nodes[10].decisions[1].decisions[1].value)
