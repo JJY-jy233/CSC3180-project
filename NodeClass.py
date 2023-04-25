@@ -4,7 +4,7 @@ import pickle
 
 class ResultNode:
     def __init__(self):
-        self.value = 0
+        self.value = 1
         pass
 
     def change_util(self, util):
@@ -32,9 +32,9 @@ class DecisionNode():
         self.rs_5 = None
 
         self.fold = None
-        self.util = 0
+        self.util = None
 
-
+        self.value = 0
         self.over = False
         # by calling decisions[i] to decide which action to take
         # eg:decisions[0] means "check"
@@ -50,6 +50,15 @@ class DecisionNode():
         util = ResultNode()
         self.decisions[0] = util
         pass
+
+    def compute_value(self):
+        self.value = self.decisions[0].value * self.decisions_p[0] \
+        +self.decisions[1].value * self.decisions_p[1] \
+        +self.decisions[2].value * self.decisions_p[2] \
+        +self.decisions[3].value * self.decisions_p[3] \
+        +self.decisions[4].value * self.decisions_p[4] \
+        +self.decisions[5].value * self.decisions_p[5] \
+        +self.decisions[6].value * self.decisions_p[6] \
 
     # def extend_resultnode(self, node):
     #     for i in range(len(self.decisions)):
@@ -109,7 +118,7 @@ class RootNode:
 
         for i in range(169):
             new_node = DecisionNode()
-            for t in range(1,len(self.nodes[i].decisions)):
+            for t in range(1, len(self.nodes[i].decisions)):
                 for j in range(1, len(self.nodes[i].decisions[t].decisions)):
                     for n in range(1, len(self.nodes[i].decisions[t].decisions[j].decisions)):
                         self.nodes[i].decisions[t].decisions[j].decisions[n].extend_node(
@@ -121,7 +130,29 @@ class RootNode:
                 for j in range(1, len(self.nodes[i].decisions[t].decisions)):
                     for n in range(1, len(self.nodes[i].decisions[t].decisions[j].decisions)):
                         for m in range(1, len(self.nodes[i].decisions[t].decisions[j].decisions)):
-                            self.nodes[i].decisions[t].decisions[j].decisions[n].decisions[m].util = new_node
+                            self.nodes[i].decisions[t].decisions[j].decisions[n].decisions[m] = new_node
+
+        for i in range(169):
+            new_node = DecisionNode()
+            for t in range(1, len(self.nodes[i].decisions)):
+                for j in range(1, len(self.nodes[i].decisions[t].decisions)):
+                    for n in range(1, len(self.nodes[i].decisions[t].decisions[j].decisions)):
+                        self.nodes[i].decisions[t].decisions[j].decisions[n].compute_value(
+                        )
+
+        for i in range(169):
+            new_node = DecisionNode()
+            for t in range(1, len(self.nodes[i].decisions)):
+                for j in range(1, len(self.nodes[i].decisions[t].decisions)):
+                    self.nodes[i].decisions[t].decisions[j].compute_value()
+
+        for i in range(169):
+            new_node = DecisionNode()
+            for t in range(1, len(self.nodes[i].decisions)):
+                self.nodes[i].decisions[t].compute_value()
+
+        for i in range(169):
+            self.nodes[i].compute_value()
 
     def store_p(self):
         with open('decision_data.pkl', 'wb') as f:
@@ -161,5 +192,3 @@ class RootNode:
                             self.nodes[i].decisions[t].decisions[j].decisions[n].decisions_p = pickle.load(
                                 f)
 
-root = RootNode()
-print(root.nodes[0].decisions[0].value)
