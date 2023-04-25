@@ -15,6 +15,7 @@ class Player:
         self.score = None
         self.current_bet = 0
         self.p = None
+        self.position:int = None
         self.first_choice = None
         self.second_choice = None
         self.third_choice = None

@@ -163,6 +163,7 @@ class Game:
         for i in range(4):
             self.states.append(State())
         for i in range(self.players_num):
+            self.players[i].position = i
             for j in range(4):
                 self.players[i].states[j] = self.states[j]
         pass
@@ -259,9 +260,11 @@ class Game:
         # 洗牌
         random.shuffle(self.cards)
         
-        # 清空手牌
-        for i in self.players:
-            i.hand = []
+        # 清空手牌, 换位置
+        
+        for i in range(self.players_num):
+            self.players[i].position = i
+            self.players[i].hand = []
             
             
         
