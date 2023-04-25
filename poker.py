@@ -310,9 +310,9 @@ class Game:
         elif num == 1:
             self.card_position += 1
             self.public_cards.append(self.cards[self.card_position])
-            if round == 1:
+            if round == 3:
                 self.states[2].public_cards = self.public_cards.copy()
-            elif round == 2:
+            elif round == 4:
                 self.states[3].public_cards = self.public_cards.copy()
             self.card_position += 1
         return

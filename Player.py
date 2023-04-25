@@ -20,11 +20,11 @@ class Player:
         self.third_choice = None
         self.fourth_choice = None
         self.hand_num = None
-        self.first_state:State = None
-        self.second_state:State = None
+        self.states:list[State] = [None,None,None,None]
+        # self.second_state:State = None
         
-        self.third_state:State = None
-        self.fourth_state:State = None
+        # self.third_state:State = None
+        # self.fourth_state:State = None
         # self.is_fold = False
         # # self.is_bet = False
         # self.is_check = False

@@ -15,20 +15,20 @@ class ResultNode:
 class DecisionNode():
     def __init__(self):
 
-        self.check_p = 0.142
+        self.check_p = 0.2
         self.check = None
-        self.call_p = 0.142
+        self.call_p = 0.2
         self.call = None
-        self.fold_p = 0.142
+        self.fold_p = 0.2
 
         self.bet = None
-        self.bet_p = 0.142
+        self.bet_p = 0.2
 
-        self.rs_1_3_p = 0.142
+        self.rs_1_3_p = 0.1
         self.rs_1_3 = None
-        self.rs_3_5_p = 0.142
+        self.rs_3_5_p = 0.06
         self.rs_3_5 = None
-        self.rs_5_p = 0.142
+        self.rs_5_p = 0.04
         self.rs_5 = None
 
         self.util = None
