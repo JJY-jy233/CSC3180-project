@@ -165,6 +165,9 @@ class Player:
         
     def learn(self) -> None:
         # Update decision tree
+        
+        
+        
         pass
     
     def small_blind(self,sb):
@@ -255,7 +258,7 @@ class Player:
         elif round == 4:
             self.p_l = self.tree.nodes[num].decisions[self.first_choice].decisions[self.second_choice].decisions[self.third_choice].decisions_p
             
-        print(self.p_l)
+        # print(self.p_l)
         
         # self.hand
 
