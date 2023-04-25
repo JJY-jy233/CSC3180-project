@@ -1,7 +1,35 @@
 import random
+import numpy as np
 from itertools import combinations
 import NodeClass
 import time
+def eval_hand(hand:list) -> int: #11 , 9 -> 1,3
+    # l = [['AA','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s'],
+    #      ['AKo','KK','KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s','K4s','K3s','K2s'],
+    #      ['AQo','KQo','QQ','QJs','QTs','Q9s','Q8s','Q7s','Q6s','Q5s','Q4s','Q3s','Q2s'],
+    #      ['AJo','KJo','QJo','JJ','JTs','J9s','J8s','J7s','J6s','J5s','J4s','J3s','J2s'],
+    #      ['ATo','KTo','QTo','JTo','TT','T9s','T8s','T7s','T6s','T5s','T4s','T3s','T2s'],
+    #      ['A9o','K9o','Q9o','J9o','T9o','99','98s','97s','96s','95s','94s','93s','92s'],
+    #      ['A8o','K8o','Q8o','J8o','T8o','98o','88','87s','86s','85s','84s','83s','82s'],
+    #      ['A7o','K7o','Q7o','J7o','T7o','97o','87o','77','76s','75s','74s','73s','72s'],
+    #      ['A6o','K6o','Q6o','J6o','T6o','96o','86o','76o','66','65s','64s','63s','62s'],
+    #      ['A5o','K5o','Q5o','J5o','T5o','95o','85o','75o','65o','55','54s','53s','52s'],
+    #      ['A4o','K4o','Q4o','J4o','T4o','94o','84o','74o','64o','54o','44','43s','42s'],
+    #      ['A3o','K3o','Q3o','J3o','T3o','93o','83o','73o','63o','53o','43o','33','32s'],
+    #      ['A2o','K2o','Q2o','J2o','T2o','92o','82o','72o','62o','52o','42o','32o','22'],]
+    hand.sort()
+    a = get_card_suit_id(hand[0])
+    b = get_card_suit_id(hand[1]) 
+    big = get_card_num_id(hand[0]) # 0-12
+    small = get_card_num_id(hand[1])
+
+    i = 12 - big
+    j = 12 - small         
+    if a == b: # suit
+        return j * 13 + i
+    else: 
+        return i * 13 + j
+    
 
 def display_card(card_id:int) -> str:
     
@@ -109,15 +137,21 @@ def get_max_score(seven_cards:list) -> tuple:
     return max_type, max_value
 
 class Player:
-    def __init__(self,name:str,position:int,money:int = 10000,label = None) -> None:
+    def __init__(self,name:str,position:int,money:int = 10000,tree:NodeClass.RootNode = None,label = None) -> None:
         self.name = name
         self.money = money
         self.label = label
         self.position = position
-        self.tree = None
+        self.tree = tree
         self.hand = []
         self.score = None
         self.current_bet = 0
+        self.p = None
+        self.first_choice = None
+        self.second_choice = None
+        self.third_choice = None
+        self.fourth_choice = None
+        
         # self.is_fold = False
         # # self.is_bet = False
         # self.is_check = False
@@ -159,8 +193,15 @@ class Player:
     # def call(self,money:int) -> int:
     #     return money
     
-    def Raise(self,max_bet:int) -> int:
-        dif = 2*max_bet - self.current_bet
+    def Raise(self,max_bet:int,factors:int) -> int:
+        
+        if factors == 1:
+            coefficient = random.choice([2,3])
+        elif factors == 3:
+            coefficient = random.choice([4,5])
+        elif factors == 5:
+            coefficient = random.choice([6,7])
+        dif = coefficient * max_bet - self.current_bet
         if self.money > dif:
             self.money -= dif
             self.current_bet += dif
@@ -198,27 +239,56 @@ class Player:
         pass
         # self.tree 
     
-    def action(self,max_bet) -> float:
+    def action(self,max_bet,round) -> float:
         
         # action_label = -1
         # search tree
         # step
-        self.tree
-        self.hand
+        if round == 1:
+            num = eval_hand(self.hand)
+            self.p_l = self.tree.nodes[num].decisions_p
+        elif round == 2:
+            self.p_l = self.tree.nodes[num].decisions[self.first_choice].decisions_p
+        elif round == 3:
+            self.p_l = self.tree.nodes[num].decisions[self.first_choice].decisions[self.second_choice].decisions_p
+            
+        elif round == 4:
+            self.p_l = self.tree.nodes[num].decisions[self.first_choice].decisions[self.second_choice].decisions[self.third_choice].decisions_p
+            
+        print(self.p_l)
+        
+        # self.hand
 
         # action_label = self.tree
         # random.choice(["check","call",'asd'])
         
-        
+        np.random.seed(0)
         # 没人下注的话，可以check和bet（一般不直接fold）S
         if((max_bet - self.current_bet)==0):
-            action_label = random.choice([1,2])
+            sum = self.p_l[1] + self.p_l[3]
+            p = np.array([self.p_l[1] / sum, self.p_l[3] / sum])
+            action_label = np.random.choice([1,3] , p = p.ravel())
             
         # 有人下注就不能check，只能fold，call，raise
         else:
-            action_label = random.choice([0,3,4])
+            sum = self.p_l[0] + self.p_l[2] + self.p_l[4] + self.p_l[5] + self.p_l[6]
+            p = np.array([self.p_l[0] / sum, self.p_l[2] / sum, self.p_l[4] / sum, self.p_l[5] / sum,self.p_l[6] / sum])
+            action_label = np.random.choice([0,2,4,5,6] , p = p.ravel())
+            # action_label = random.choice([0,3,4,5,6])
         # action_label = 4
-        
+        if round == 1:
+           
+            self.first_choice = action_label
+        elif round == 2:
+            self.second_choice = action_label
+
+        elif round == 3:
+            self.third_choice = action_label
+            
+        elif round == 4:
+            self.fourth_choice = action_label
+            
+            
 
             
         if action_label == 0:
@@ -229,8 +299,12 @@ class Player:
             money = self.bet(2)
         elif action_label == 3:  # call
             money = self.call(max_bet)
-        else:
-            money = self.Raise(max_bet)
+        elif action_label == 4:
+            money = self.Raise(max_bet,1)
+        elif action_label == 5:
+            money = self.Raise(max_bet,3)
+        elif action_label == 6:
+            money = self.Raise(max_bet,5)
         return money
         
     
@@ -405,7 +479,7 @@ class Game:
             self.card_position += 1
         return
     
-    def action(self) -> None:
+    def action(self,round) -> None:
         for i in self.rest_players:
             i.current_bet = 0
         i = 0
@@ -421,7 +495,7 @@ class Game:
             
             
             # 玩家的下注量 可能是负数（fold：-2，check：-1）
-            player_bet = p.action(max_bet)
+            player_bet = p.action(max_bet,round)
             self.pot += max(0,player_bet)
             
             # # 当前一轮最大下注筹码
@@ -491,7 +565,7 @@ class Game:
             p = self.rest_players[i]
             
             # 玩家的下注量 可能是负数（fold：-2，check：-1）
-            player_bet = p.action(max_bet)
+            player_bet = p.action(max_bet,1)
             self.pot += max(0,player_bet)
             
              # 当前一轮最大下注筹码
@@ -546,6 +620,7 @@ class Game:
             
     def end_game(self,player:Player) -> None:
         player.money += self.pot
+        # print(player.name,'wins, now have:',player.money)
         for i in self.players:
             i.learn()
             
@@ -582,7 +657,7 @@ class Game:
         self.deal_public_cards(3)
         
         # 第二轮下注
-        self.action()
+        self.action(2)
         
         if len(self.rest_players) == 1:
             self.end_game(self.rest_players[0])
@@ -597,7 +672,7 @@ class Game:
         self.deal_public_cards(1)
         
         # 第三轮下注
-        self.action()
+        self.action(3)
         
         if len(self.rest_players) == 1:
             self.end_game(self.rest_players[0])
@@ -611,7 +686,7 @@ class Game:
         self.deal_public_cards(1)
         
         # 第四轮下注
-        self.action()
+        self.action(4)
         
         if len(self.rest_players) == 1:
             self.end_game(self.rest_players[0])
@@ -646,12 +721,12 @@ def oo(n1,n2):
 
 if __name__ == "__main__":
     
-    # root = NodeClass.RootNode()
-    Jack = Player('1',1,400)
-    Bob = Player('2',2,400)
-    Amy = Player('3',3,400)
-    Cat = Player('4',4,400)
-    Dog = Player('5',5,400)
+    root = NodeClass.RootNode()
+    Jack = Player('1',1,400,root)
+    Bob = Player('2',2,400,root)
+    Amy = Player('3',3,400,root)
+    Cat = Player('4',4,400,root)
+    Dog = Player('5',5,400,root)
     players_list = [Jack,Bob,Amy,Cat,Dog]
     game = Game(players_list)
     # game.delete_player(0)
@@ -677,20 +752,33 @@ if __name__ == "__main__":
     # for i in game.players:
     #     print(i.score)
     s = time.time()
-    i = 0
-    for i in range(10):
-        if i > 0:
-            print("game: ",i)
-        game.one_play()
-        # time.sleep(3)
-        i+=1
-        sum = 0
-        for j in game.players:
-            sum += j.money
-        if(sum!=2000):
-            print(i,sum)
+    # i = 0
+    for k in range(100):
+        for l in game.players:
+            l.money = 400
+        for i in range(10):
+            print("game: ",k*10+i)
+            game.one_play()
+            # time.sleep(3)
+            i+=1
+            sum = 0
+            for j in game.players:
+                sum += j.money
+                
+            if sum != 2000:
+                print(sum)
+                break
+
+                
     e = time.time()
     print(e-s)
+    # np.random.seed(0)
+    # p = np.array([0.1 / 0.4,0.3 / 0.4])
+    # for i in range(20):
+    #     print(np.random.choice([1,2] , p = p.ravel()))
+    # hand = [5,45]
+    # print(eval_hand(hand))
+    # display_hand(hand)
     # int("-------------------------------------------------------------------------------------------------------")
         
         
