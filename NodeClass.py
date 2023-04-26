@@ -45,8 +45,9 @@ class DecisionNode():
                             self.rs_1_3_p, self.rs_3_5_p, self.rs_5_p]
         pass
 
-    def extend_node(self, node):
+    def extend_node(self):
         for i in range(1, len(self.decisions)):
+            node = DecisionNode()
             self.decisions[i] = node
         util = ResultNode()
         self.decisions[0] = util
@@ -124,30 +125,26 @@ class RootNode:
             self.nodes.append(node)  # create the dicisions at the begining
 
         for i in range(169):
-            new_node = DecisionNode()
             # create the dicisions after the first round
-            self.nodes[i].extend_node(new_node)
+            self.nodes[i].extend_node()
 
         for i in range(169):
             for t in range(1, len(self.nodes[i].decisions)):
                 # create the dicisions after the second round
-                new_node = DecisionNode()
-                self.nodes[i].decisions[t].extend_node(new_node)
+                self.nodes[i].decisions[t].extend_node()
 
         for i in range(169):
             for t in range(1, len(self.nodes[i].decisions)):
                 for j in range(1, len(self.nodes[i].decisions[t].decisions)):
-                    new_node = DecisionNode()
                     self.nodes[i].decisions[t].decisions[j].extend_node(
-                        new_node)  # create the dicisions after the third round
+                        )  # create the dicisions after the third round
 
         for i in range(169):
             for t in range(1, len(self.nodes[i].decisions)):
                 for j in range(1, len(self.nodes[i].decisions[t].decisions)):
                     for n in range(1, len(self.nodes[i].decisions[t].decisions[j].decisions)):
-                        new_node = DecisionNode()
                         self.nodes[i].decisions[t].decisions[j].decisions[n].extend_node(
-                            new_node)  # create the dicisons after the fourth round
+                            )  # create the dicisons after the fourth round
 
         for i in range(169):
             for t in range(1, len(self.nodes[i].decisions)):
@@ -239,3 +236,18 @@ class RootNode:
                                 f)
 
 
+# root = RootNode()
+# root.nodes[2].decisions[6].decisions[6].value = 5
+# print(root.nodes[2].decisions[6].decisions[6].value)
+# print(root.nodes[2].decisions[6].decisions[5].value)
+root = RootNode()
+root.nodes[0].decisions[6].decisions[4].decisions[3].value = 0
+root.nodes[0].decisions[6].decisions[4].decisions[4].value = 9
+root.nodes[0].decisions[6].decisions[4].decisions[5].value = 10
+print(root.nodes[0].decisions[6].decisions[4].decisions[1])
+print(root.nodes[0].decisions[6].decisions[4].decisions[2])
+
+print(root.nodes[0].decisions[6].decisions[4].decisions[3].decisions[1])
+print(root.nodes[0].decisions[6].decisions[4].decisions[4].decisions[1])
+print(root.nodes[0].decisions[6].decisions[4].decisions[5].decisions[1])
+print(root.nodes[0].decisions[6].decisions[4].decisions[6].decisions[1])
