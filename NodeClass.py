@@ -4,7 +4,7 @@ import pickle
 
 class ResultNode:
     def __init__(self):
-        self.value = 1
+        self.value = 0
         self.is_end = True
         pass
 

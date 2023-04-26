@@ -62,11 +62,6 @@ class Matrix:
         else:
             return self.matrix[row][col]/self.lower_precentage_sum
 
-        '''
-        matrix = self.matrix
-        precentage_sum = self.precentage_sum
-        return matrix[row][col]/precentage_sum
-        '''
 
     def curve_process(self, wager):  # 转化为一个Lim等于2的func
         curve_index = self.curve_index
@@ -402,9 +397,7 @@ class Matrix:
 
     def first_bet_update(self, wager, current_deposit, initial_deposit):  # 没有公牌时用的update
         matrix = self.matrix
-        possibility_threshold = 10 + 10 * \
-            self.valueable_func(wager, current_deposit,
-                                initial_deposit)/initial_deposit
+        possibility_threshold = 8 + 4 *self.valueable_func(wager, current_deposit,initial_deposit)/initial_deposit
         for row in range(13):
             for col in range(13):
                 cache = (possibility_threshold - 9) * math.log(
@@ -420,7 +413,7 @@ class Matrix:
         value = self.valueable_func(wager, current_deposit, initial_deposit)
         public_card = []
         for raw_card in raw_public_card:
-            public_card.append([(raw_card+1)//13, 12-raw_card % 13])
+            public_card.append([get_card_suit_id(raw_card), 12-get_card_num_id(raw_card)])
 
         self.one_pair_complement(value, public_card)
         self.three_of_kind_complement(value, public_card)
@@ -493,15 +486,24 @@ class Matrix:
         win_count = 0
         sum_count = 0
 
+        if len(public_cards) == 0:
+            i = max(get_card_num_id(self_player.hand[0]),get_card_num_id(self_player.hand[1]))
+            j = min(get_card_num_id(self_player.hand[0]),get_card_num_id(self_player.hand[1]))
+
+            if get_card_suit_id(self_player.hand[0]) == get_card_suit_id(self_player.hand[1]):                   
+                i = min(get_card_num_id(self_player.hand[0]),get_card_num_id(self_player.hand[1]))
+                j = max(get_card_num_id(self_player.hand[0]),get_card_num_id(self_player.hand[1]))
+
+            for row in range(13):
+                for col in range(13):
+                    if self.winning_posibility_matrix[i][j] > self.winning_posibility_matrix[row][col]:
+                        win_count += self.matrix[i][j]/self.precentage_sum
+                    elif self.winning_posibility_matrix[i][j] == self.winning_posibility_matrix[row][col]:
+                        win_count += 0.5*self.matrix[i][j]/self.precentage_sum
+            return win_count
+
         for card in public_cards:
-            if card > 38:
-                suit_count[3] += 1
-            elif card > 25:
-                suit_count[2] += 1
-            elif card > 12:
-                suit_count[1] += 1
-            else:
-                suit_count[0] += 1
+            suit_count[get_card_suit_id(card)] += 1
 
         three_same_suit = -1
         four_same_suit = -1
@@ -514,32 +516,21 @@ class Matrix:
 
         for i in range(4):
             for j in range(len(possible_combination[i])):
-                multiplier = 1
-                if three_same_suit == i and three_same_suit == j:
-                    multiplier = 1
-                elif four_same_suit == i or four_same_suit == j:
-                    multiplier = 1
-
                 if i == j:
                     for row in range(13):
                         for col in range(row+1, 13):
                             temp_player = Player(name=' ', position=1)
-                            temp_player.hand = [
-                                i*13-1 + (12-row), j*13-1 + (12-col)]
-                            if i*13-1 + (12-row) in self_player.hand or j*13-1 + (12-row) in self_player.hand:
+                            temp_player.hand = [i + 4*(12-row), j + 4*(12-col)]
+                            if i + 4*(12-row) in self_player.hand or j + 4*(12-col) in self_player.hand:
                                 continue
-                            if self.return_possibility(row, col) > 1:
-                                # print(row,col,self.return_possibility(row,col))
-                                self.return_possibility(row, col)
                             conditional_winning_possibility[i][j] += self.m_show_hand(
                                 public_cards, self_player, temp_player) * self.return_possibility(row, col)
                 else:
                     for row in range(13):
                         for col in range(row):
                             temp_player = Player(name=' ', position=1)
-                            temp_player.hand = [
-                                i*13-1 + (12-row), j*13-1 + (12-col)]
-                            if i*13-1 + (12-row) in self_player.hand or j*13-1 + (12-row) in self_player.hand:
+                            temp_player.hand = [i + 4*(12-row), j + 4*(12-col)]
+                            if i + 4*(12-row)  in self_player.hand or j + 4*(12-col) in self_player.hand:
                                 continue
                             conditional_winning_possibility[i][j] += self.m_show_hand(
                                 public_cards, self_player, temp_player) * self.return_possibility(row, col)
@@ -553,7 +544,6 @@ class Matrix:
                     multiplier = 2
                 win_count += multiplier * conditional_winning_possibility[i][j]
                 sum_count += multiplier
-        # print(conditional_winning_possibility)
         return win_count/sum_count
 
 
@@ -716,69 +706,82 @@ class Player:
         # action_label = self.tree
         # random.choice(["check","call",'asd'])
 
-        if round == 1:
-            win_pos = 0.5
-        else:
-            win_pos = self.matrix1.return_winning_possibility(self.states[round-1].public_cards)
+        # if round == 1:
+        #     win_pos = 0.5
+        # else:
+        #     win_pos = self.matrix1.return_winning_possibility(self.states[round-1].public_cards)
             
-        # np.random.seed(0)
-        # # 没人下注的话，可以check和bet（一般不直接fold）S
-        if ((max_bet - self.current_bet) == 0):
-            sum = self.p_l[1] + self.p_l[3]
-            p1 = self.p_l[1] / sum / 2 + (1-win_pos) / 2
-            p2 = self.p_l[3] / sum / 2 + win_pos / 2
-            p = np.array([p1, p2])
-            action_label = np.random.choice([1, 3], p=p.ravel())
+        # # np.random.seed(0)
+        # # # 没人下注的话，可以check和bet（一般不直接fold）S
+        # if ((max_bet - self.current_bet) == 0):
+        #     sum = self.p_l[1] + self.p_l[3]
+        #     p1 = self.p_l[1] / sum / 2 + (1-win_pos) / 2
+        #     p2 = self.p_l[3] / sum / 2 + win_pos / 2
+        #     p = np.array([p1, p2])
+        #     action_label = np.random.choice([1, 3], p=p.ravel())
 
-        # 有人下注就不能check，只能fold，call，raise
-        else:
-            sum = self.p_l[0] + self.p_l[2] + \
-                self.p_l[4] + self.p_l[5] + self.p_l[6]
-            if win_pos < 0.4:
-                p1 = self.p_l[0] / sum / 2 + (1-win_pos)/2
-                p2 = self.p_l[2] / sum / 2 + win_pos/8
-                p3 = self.p_l[4] / sum / 2 + win_pos/8
-                p4 = self.p_l[5] / sum / 2 + win_pos/8
-                p5 = self.p_l[6] / sum / 2 + win_pos/8
-            elif win_pos >= 0.4 and win_pos < 0.55:
-                p1 = self.p_l[0] / sum / 2 + (1-win_pos)/8
-                p2 = self.p_l[2] / sum / 2 + win_pos/2
-                p3 = self.p_l[4] / sum / 2 + (1-win_pos)/8
-                p4 = self.p_l[5] / sum / 2 + (1-win_pos)/8
-                p5 = self.p_l[6] / sum / 2 + (1-win_pos)/8
-            elif win_pos >= 0.55 and win_pos < 0.7:
-                p1 = self.p_l[0] / sum / 2 + (1-win_pos)/8
-                p2 = self.p_l[2] / sum / 2 + (1-win_pos)/8
-                p3 = self.p_l[4] / sum / 2 + win_pos/2
-                p4 = self.p_l[5] / sum / 2 + (1-win_pos)/8
-                p5 = self.p_l[6] / sum / 2 + (1-win_pos)/8
-            elif win_pos >= 0.7 and win_pos < 0.85:
-                p1 = self.p_l[0] / sum / 2 + (1-win_pos)/8
-                p2 = self.p_l[2] / sum / 2 + (1-win_pos)/8
-                p3 = self.p_l[4] / sum / 2 + (1-win_pos)/8
-                p4 = self.p_l[5] / sum / 2 + win_pos/2
-                p5 = self.p_l[6] / sum / 2 + (1-win_pos)/8
-            elif win_pos >= 0.85 and win_pos <= 1:
-                p1 = self.p_l[0] / sum / 2 + (1-win_pos)/8
-                p2 = self.p_l[2] / sum / 2 + (1-win_pos)/8
-                p3 = self.p_l[4] / sum / 2 + (1-win_pos)/8
-                p4 = self.p_l[5] / sum / 2 + (1-win_pos)/8
-                p5 = self.p_l[6] / sum / 2 + win_pos/2
-            p = np.array([p1, p2, p3, p4, p5])
-            action_label = np.random.choice([0, 2, 4, 5, 6], p=p.ravel())
-            action_label = random.choice([0,3,4,5,6])
+        # # 有人下注就不能check，只能fold，call，raise
+        # else:
+        #     sum = self.p_l[0] + self.p_l[2] + \
+        #         self.p_l[4] + self.p_l[5] + self.p_l[6]
+        #     if win_pos < 0.4:
+        #         p1 = self.p_l[0] / sum / 2 + (1-win_pos)/2
+        #         p2 = self.p_l[2] / sum / 2 + win_pos/8
+        #         p3 = self.p_l[4] / sum / 2 + win_pos/8
+        #         p4 = self.p_l[5] / sum / 2 + win_pos/8
+        #         p5 = self.p_l[6] / sum / 2 + win_pos/8
+        #     elif win_pos >= 0.4 and win_pos < 0.55:
+        #         p1 = self.p_l[0] / sum / 2 + (1-win_pos)/8
+        #         p2 = self.p_l[2] / sum / 2 + win_pos/2
+        #         p3 = self.p_l[4] / sum / 2 + (1-win_pos)/8
+        #         p4 = self.p_l[5] / sum / 2 + (1-win_pos)/8
+        #         p5 = self.p_l[6] / sum / 2 + (1-win_pos)/8
+        #     elif win_pos >= 0.55 and win_pos < 0.7:
+        #         p1 = self.p_l[0] / sum / 2 + (1-win_pos)/8
+        #         p2 = self.p_l[2] / sum / 2 + (1-win_pos)/8
+        #         p3 = self.p_l[4] / sum / 2 + win_pos/2
+        #         p4 = self.p_l[5] / sum / 2 + (1-win_pos)/8
+        #         p5 = self.p_l[6] / sum / 2 + (1-win_pos)/8
+        #     elif win_pos >= 0.7 and win_pos < 0.85:
+        #         p1 = self.p_l[0] / sum / 2 + (1-win_pos)/8
+        #         p2 = self.p_l[2] / sum / 2 + (1-win_pos)/8
+        #         p3 = self.p_l[4] / sum / 2 + (1-win_pos)/8
+        #         p4 = self.p_l[5] / sum / 2 + win_pos/2
+        #         p5 = self.p_l[6] / sum / 2 + (1-win_pos)/8
+        #     elif win_pos >= 0.85 and win_pos <= 1:
+        #         p1 = self.p_l[0] / sum / 2 + (1-win_pos)/8
+        #         p2 = self.p_l[2] / sum / 2 + (1-win_pos)/8
+        #         p3 = self.p_l[4] / sum / 2 + (1-win_pos)/8
+        #         p4 = self.p_l[5] / sum / 2 + (1-win_pos)/8
+        #         p5 = self.p_l[6] / sum / 2 + win_pos/2
+        #     p = np.array([p1, p2, p3, p4, p5])
+        #     action_label = np.random.choice([0, 2, 4, 5, 6], p=p.ravel())
+        #     action_label = random.choice([0,3,4,5,6])
         # action_label = 4
         np.random.seed(0)
         # 没人下注的话，可以check和bet（一般不直接fold）S
         if ((max_bet - self.current_bet) == 0):
             sum = self.p_l[1] + self.p_l[3]
-            p = np.array([self.p_l[1] / sum, self.p_l[3] / sum])
+            if sum == 0:
+                p = np.array([0.5, 0.5])
+            else:   
+                p = np.array([self.p_l[1] / sum, self.p_l[3] / sum])
             action_label = np.random.choice([1, 3], p=p.ravel())
 
         # 有人下注就不能check，只能fold，call，raise
         else:
             sum = self.p_l[0] + self.p_l[2] + \
                 self.p_l[4] + self.p_l[5] + self.p_l[6]
+            if self.p_l[0]<0:
+                self.p_l[0] = 0
+            if self.p_l[2]<0:
+                self.p_l[2] = 0
+            if self.p_l[4] < 0:
+                self.p_l[4] = 0
+            if self.p_l[5] < 0:
+                self.p_l[5] = 0
+            if self.p_l[6]<0:
+                self.p_l[6]
             p = np.array([self.p_l[0] / sum, self.p_l[2] / sum,
                          self.p_l[4] / sum, self.p_l[5] / sum, self.p_l[6] / sum])
             action_label = np.random.choice([0, 2, 4, 5, 6], p=p.ravel())

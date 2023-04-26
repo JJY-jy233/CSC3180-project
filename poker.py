@@ -116,12 +116,16 @@ class Game:
                 j+=1
         
         # 还没有分出胜负，平分彩池
-        self.chop(winners)
+        if player != None:
+            if winners.count(player) == 1:
+                return len(winners)
+        self.chop(winners,player)
         print("chop")
+        return 0
                 
                     
             
-    def chop(self,winners:list[Player]) -> None:
+    def chop(self,winners:list[Player],player) -> None:
         # winners = list(set(winners))
         part_pot = self.pot / len(winners)
         print(self.pot,"part",part_pot,"WINNER LEN",len(winners))
@@ -533,27 +537,107 @@ if __name__ == "__main__":
     game.deal_public_cards(3,2)
     game.deal_public_cards(1,3)
     game.deal_public_cards(1,4)
-    # Jack.hand_num = eval_hand(Jack.hand)
-    print(Jack.hand_num)
-    print(Jack.tree.nodes[Jack.hand_num].decisions[2].decisions[2].decisions[2].decisions[2].value)
-    print(Jack.tree.nodes[Jack.hand_num].decisions[2].decisions[2].decisions[2].decisions[3].value)
-    
-# player.tree.nodes[player.hand_num].decisions[i].decisions[j].decisions[k].decisions
-    
+    sum = 0
+    # Jack.hand = [50,51]
+    # Jack.hand_num = 0
+    display_hand(Jack.hand)
+    # print(Jack.hand_num)
     MCCFR.simulate_game(game,Jack,[400,400,400,400,400])
-    print(Jack.tree.nodes[Jack.hand_num].decisions[2].decisions[2].decisions[2].decisions[2].value)
-    print(Jack.tree.nodes[Jack.hand_num].decisions[2].decisions[2].decisions[2].decisions[3].value)
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[4].decisions[3].value)
     
+    Jack.tree.update()
+    MCCFR.simulate_game(game,Amy,[400,400,400,400,400])
+    Amy.tree.update()
+    MCCFR.simulate_game(game,Bob,[400,400,400,400,400])
+    Bob.tree.update()
+    MCCFR.simulate_game(game,Cat,[400,400,400,400,400])
+    Cat.tree.update()
+    MCCFR.simulate_game(game,Dog,[400,400,400,400,400])
+    Dog.tree.update()
+    MCCFR.simulate_game(game,Jack,[400,400,400,400,400])
+    Jack.tree.update()
+    # game.new_game()
+    # game.deal_card()
+    # game.deal_public_cards(3,2)
+    # game.deal_public_cards(1,3)
+    # game.deal_public_cards(1,4)
+    # MCCFR.simulate_game(game,Jack,[400,400,400,400,400])
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[4].decisions[5].value)
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[4].decisions[4].value)
+    
+    # Jack.tree.update()
+    
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[4].value)
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[3].value)
+    
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[4].decisions_p)
+    
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[4].decisions[0].value)
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[4].decisions[1].value)
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[4].decisions[2].value)
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[4].decisions[3].value)
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[4].decisions[4].value)
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[4].decisions[5].value)
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[4].decisions[6].value)
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[3].decisions_p)
+    # print(Jack.tree)
 
     
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[3].decisions[1].value)
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[3].decisions[2].value)
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[3].decisions[3].value)
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[3].decisions[4].value)
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[3].decisions[5].value)
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[3].decisions[6].value)
+    
+    
+    print("D",Jack.tree.nodes[Jack.hand_num].value)
+    # print("D",Jack.tree.nodes[Jack.hand_num].value)
+    
+    # MCCFR.simulate_game(game,Amy,[400,400,400,400,400])
+    # Amy.tree.update()
+    # MCCFR.simulate_game(game,Bob,[400,400,400,400,400])
+    # Bob.tree.update()
+    # MCCFR.simulate_game(game,Cat,[400,400,400,400,400])
+    # Cat.tree.update()
+    # MCCFR.simulate_game(game,Dog,[400,400,400,400,400])
+    # Dog.tree.update()
+    # MCCFR.simulate_game(game,Jack,[400,400,400,400,400])
+    # Jack.tree.update()
+    # print(Jack.tree.nodes[Jack.hand_num].value)
+    
+    # print(Jack.tree.nodes[Jack.hand_num].decisions_p)
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[0].value)
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[1].value)
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[2].value)
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[3].value)
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[4].value)
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[5].value)
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[6].value)
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions_p)
+    # # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[0].value)
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[1].value)
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[2].value)
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[3].value)
+    # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].value)
+    
+    
+    # print(Jack.tree.nodes[Amy.hand_num].value)
+    # print(Jack.tree.nodes[Bob.hand_num].value)
+    # print(Jack.tree.nodes[Cat.hand_num].value)
+    # print(Jack.tree.nodes[Dog.hand_num].value)
+
+
+
+    
+            
+            
+
+        
+
         
         
 
-    
-
-    
-    
-
-                
+                    
 
 
