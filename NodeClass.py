@@ -73,7 +73,8 @@ class DecisionNode():
         if abs(min(diff_list)) <= min(self.decisions_p):
             for i in range(len(self.decisions_p)):
                 self.decisions_p[i] += diff_list[i]
-
+        elif abs(min(diff_list)) == 0:
+            return
         else:
             factor = min(self.decisions_p) / abs(min(diff_list))
             diff_list = [factor * i for i in diff_list]
@@ -234,20 +235,3 @@ class RootNode:
                         for n in range(len(self.nodes[i].decisions[t].decisions[j].decisions)):
                             self.nodes[i].decisions[t].decisions[j].decisions[n].decisions_p = pickle.load(
                                 f)
-
-
-# root = RootNode()
-# root.nodes[2].decisions[6].decisions[6].value = 5
-# print(root.nodes[2].decisions[6].decisions[6].value)
-# print(root.nodes[2].decisions[6].decisions[5].value)
-root = RootNode()
-root.nodes[0].decisions[6].decisions[4].decisions[3].value = 0
-root.nodes[0].decisions[6].decisions[4].decisions[4].value = 9
-root.nodes[0].decisions[6].decisions[4].decisions[5].value = 10
-print(root.nodes[0].decisions[6].decisions[4].decisions[1])
-print(root.nodes[0].decisions[6].decisions[4].decisions[2])
-
-print(root.nodes[0].decisions[6].decisions[4].decisions[3].decisions[1])
-print(root.nodes[0].decisions[6].decisions[4].decisions[4].decisions[1])
-print(root.nodes[0].decisions[6].decisions[4].decisions[5].decisions[1])
-print(root.nodes[0].decisions[6].decisions[4].decisions[6].decisions[1])
