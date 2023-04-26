@@ -1,5 +1,6 @@
 import math
-from poker import *
+from Player import Player
+from util import *
 
 class Matrix:
     def __init__(self):

@@ -1,144 +1,11 @@
 import random
-import numpy as np
-from itertools import combinations
+# import numpy as np
 import NodeClass
 from Player import Player
 import time
 from State import State
-def eval_hand(hand:list) -> int: #11 , 9 -> 1,3
-    # l = [['AA','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s'],
-    #      ['AKo','KK','KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s','K4s','K3s','K2s'],
-    #      ['AQo','KQo','QQ','QJs','QTs','Q9s','Q8s','Q7s','Q6s','Q5s','Q4s','Q3s','Q2s'],
-    #      ['AJo','KJo','QJo','JJ','JTs','J9s','J8s','J7s','J6s','J5s','J4s','J3s','J2s'],
-    #      ['ATo','KTo','QTo','JTo','TT','T9s','T8s','T7s','T6s','T5s','T4s','T3s','T2s'],
-    #      ['A9o','K9o','Q9o','J9o','T9o','99','98s','97s','96s','95s','94s','93s','92s'],
-    #      ['A8o','K8o','Q8o','J8o','T8o','98o','88','87s','86s','85s','84s','83s','82s'],
-    #      ['A7o','K7o','Q7o','J7o','T7o','97o','87o','77','76s','75s','74s','73s','72s'],
-    #      ['A6o','K6o','Q6o','J6o','T6o','96o','86o','76o','66','65s','64s','63s','62s'],
-    #      ['A5o','K5o','Q5o','J5o','T5o','95o','85o','75o','65o','55','54s','53s','52s'],
-    #      ['A4o','K4o','Q4o','J4o','T4o','94o','84o','74o','64o','54o','44','43s','42s'],
-    #      ['A3o','K3o','Q3o','J3o','T3o','93o','83o','73o','63o','53o','43o','33','32s'],
-    #      ['A2o','K2o','Q2o','J2o','T2o','92o','82o','72o','62o','52o','42o','32o','22'],]
-    hand.sort()
-    a = get_card_suit_id(hand[0])
-    b = get_card_suit_id(hand[1]) 
-    big = get_card_num_id(hand[0]) # 0-12
-    small = get_card_num_id(hand[1])
-
-    i = 12 - big
-    j = 12 - small         
-    if a == b: # suit
-        return j * 13 + i
-    else: 
-        return i * 13 + j
-    
-
-def display_card(card_id:int) -> str:
-    
-    num = get_card_num_id(card_id)
-    if num == 12: display = 'A'
-    elif num == 8: display = 'T'
-    elif num == 9: display = 'J'
-    elif num == 10: display = 'Q'
-    elif num == 11: display = 'K'
-    else: display = str(num+2)
-    
-    suit = get_card_suit_id(card_id)
-    if suit == 0: display += '♠'
-    elif suit == 1: display += '♥'
-    elif suit == 2: display += '♦'
-    else: display += '♣'
-    return display
-
-def display_hand(hand:list) -> None:
-    hand_display = []
-    for i in hand:
-        hand_display.append(display_card(i))
-    print(hand_display)
-    
-# 8 同花顺：比最大的牌即可。牌型分就是最大牌的数字大小
-# 7 四条：牌型分需要先比四条的数字，再比单牌的数字。所以牌型分是个二维的结构：（四条的数字, 单牌的数字）
-# 6 葫芦：牌型分是个二维的结构：（三条的数字, 一对的数字）
-# 5 同花：牌型分是个五维的结构，从大到小排列的5个牌的数字
-# 4 顺子：牌型分就是最大牌的数字大小
-# 3 三条：牌型分是个三维的结构：（三条的数字, 较大单牌的数字, 较小单牌的数字）
-# 2 两对：牌型分是个三维的结构：（较大对子的数字, 较小对子的数字, 单牌的数字）
-# 1 一对：牌型分是个三维的结构：（对子的数字, 最大单牌的数字, 第二大单牌的数字, 第三大单牌的数字）
-# 0 高牌：牌型分是个五维的结构，从大到小排列的5个牌的数字
-
-def is_flush(five_cards):
-    s = get_card_suit_id(five_cards[0])
-    for c in five_cards[1:]:
-        if s != get_card_suit_id(c):
-            return False
-    return True
-
-# 顺子：牌型分就是最大牌的数字大小
-def is_straight(five_cards) -> tuple:
-    nums = sorted([get_card_num_id(c) for c in five_cards])
-    if nums == [0, 1, 2, 3, 12]:
-        return True, [3]
-    n4 = nums[4]
-    for i, n in enumerate(nums[:4]):
-        if n4 - n != 4 - i:
-            return False, [0]
-    return True, [n4]
-    
-
-def get_type(five_cards):
-    straight, straight_value = is_straight(five_cards)
-    flush = is_flush(five_cards)
-    if flush and straight:
-        return 8, straight_value
-    if flush:
-        return 5, None  # sorted([get_card_num_id(c) for c in five_cards], reverse=True)
-    if straight:
-        return 4, straight_value
-    nums = [0] * 13
-    for card in five_cards:
-        nums[get_card_num_id(card)] += 1
-    max_freq = max(nums)
-    if max_freq == 1:
-        return 0, None  # sorted([get_card_num_id(c) for c in five_cards], reverse=True)
-    if max_freq == 4:
-        return 7, None  # [nums.index(4), nums.index(1)]
-    if max_freq == 3:
-        if min(nums) == 2:
-            return 6, None  # [nums.index(3), nums.index(2)]
-        return 3, None
-    # max_freq == 2
-    if nums.count(2) == 1:
-        return 1, None
-    return 2, None
-
-def get_value(t, v, five_cards):
-    if v is not None:
-        return v
-    if t in (0, 5):
-        return sorted((get_card_num_id(c) for c in five_cards), reverse=True)
-    nums = [0] * 13
-    for card in five_cards:
-        nums[get_card_num_id(card)] += 1
-    return sorted(list(set(get_card_num_id(c) for c in five_cards)), reverse=True, key=lambda x: (nums[x] << 5) + x)
-    
-def get_max_score(seven_cards:list) -> tuple:
-    max_type = -1
-    res = []
-    for cards in combinations(seven_cards, 5):
-        t, v = get_type(cards)
-        if t > max_type:
-            max_type = t
-            res = [(t, v, cards)]
-        elif t == max_type:
-            res.append((t, v, cards))
-    max_value = get_value(*res[0])
-    for r in res[1:]:
-        value = get_value(*r)
-        if value > max_value:
-            max_value = value
-    return max_type, max_value
-
-
+import MCCFR
+from util import *
 
     
 
@@ -176,7 +43,7 @@ class Game:
         return False
     
 
-    def show_hand(self) -> None:
+    def show_hand(self,player:Player = None) -> int:
         # allin的人
         
         for i in range(len(self.allin)):
@@ -200,8 +67,16 @@ class Game:
         # 如果只有一个玩家具有最大牌型，独赢
         if len(winners) == 1:
             # print(winners[0].name)
+            
+            # 如果指定了玩家
+            if player != None:
+                # 如果这个玩家赢了
+                if winners[0] == player:
+                    return 1
+                else:
+                    return 0
             self.end_game(winners[0])
-            return
+            return 0
 
         # 如果有多个玩家具有最大牌型，比较
         r = len(winners[0].score[1])
@@ -225,8 +100,15 @@ class Game:
                 # 如果只剩最后一个winner    
                 if len(winners) == 1:
                     # print(winners[0].name)
+                    # 如果指定了玩家
+                    if player != None:
+                        # 如果这个玩家赢了
+                        if winners[0] == player:
+                            return 1
+                        else:
+                            return 0
                     self.end_game(winners[0])
-                    return
+                    return 0
                 
                 # 遍历到最后一名玩家后 break
                 if winners[j] == winners[-1]:
@@ -320,7 +202,7 @@ class Game:
             self.card_position += 1
         return
     
-    def action(self,round) -> None:
+    def action(self,round,player:Player = None,simulate:int = -1) -> bool:
         for i in self.rest_players:
             i.current_bet = 0
         i = 0
@@ -332,11 +214,24 @@ class Game:
         while len(self.rest_players) !=0:
             
             p = self.rest_players[i]
-
             
+            # simulate
+            if p == player:
+                if simulate == 1: # check
+                    if p.current_bet != max_bet: # 如果不能check了
+                        return False
+                elif simulate == 2: # call
+                    if p.current_bet == max_bet: # 如果不能call，（别人还没有下注）
+                        return False
+                elif simulate == 3: # bet
+                    if max_bet > 0: # 别人已经bet了，只能call或者raise
+                        return False
+                player_bet = p.action(max_bet,round,simulate)
+                
             
             # 玩家的下注量 可能是负数（fold：-2，check：-1）
-            player_bet = p.action(max_bet,round)
+            else:
+                player_bet = p.action(max_bet,round)
             self.pot += max(0,player_bet)
             
             # # 当前一轮最大下注筹码
@@ -384,12 +279,12 @@ class Game:
             i+=1   
             if i > (len(self.rest_players) - 1):
                 i = 0
-            
+        return True    
             # update i matirx
         
             
             
-    def action_first_round(self) -> None:
+    def action_first_round(self,player:Player = None,simulate:int = -1) -> None:
         for i in self.rest_players:
             i.current_bet = 0
         i = 2
@@ -397,13 +292,13 @@ class Game:
         last_p = self.rest_players[1]
         # 
         self.rest_players[0].small_blind(self.smallblind)
-        self.states[0].legal_actions.append(['fold','call','raise'])
-        self.states[0].player_actions.append(['bet'])
+        # self.states[0].legal_actions.append(['fold','call','raise'])
+        # self.states[0].player_actions.append(['bet'])
         
         
         # 
         self.rest_players[1].big_blind(self.bigblind)
-        self.states[0].legal_actions.append(['raise'])
+        # self.states[0].legal_actions.append(['raise'])
         
         check_last_p = self.rest_players[1]
         # last_talk_p = self.rest_players[1]
@@ -418,8 +313,23 @@ class Game:
             
             p = self.rest_players[i]
             
+            # simulate
+            if p == player:
+                if simulate == 1: # check
+                    if p.current_bet != max_bet: # 如果不能check了
+                        return False
+                elif simulate == 2: # call
+                    if p.current_bet == max_bet and max_bet == 0: # 如果不能call，（别人还没有下注）
+                        return False 
+                elif simulate == 3: # bet
+                    if max_bet > 0: # 别人已经bet了，只能call或者raise
+                        return False
+                player_bet = p.action(max_bet,1,simulate)
+                
+            
             # 玩家的下注量 可能是负数（fold：-2，check：-1）
-            player_bet = p.action(max_bet,1)
+            else:
+                player_bet = p.action(max_bet,1)
             self.pot += max(0,player_bet)
             self.states[0].round_pot += max(0,player_bet)
             
@@ -467,13 +377,8 @@ class Game:
             i+=1   
             if i > (len(self.rest_players) - 1):
                 i = 0
-            
-            # update i matirx
-        
-        # 恢复说话顺序
-        # if check_count != len(self.rest_players):
-        #     for i in range(check_count):
-        #         self.rest_players.insert(0,self.rest_players.pop())
+        return True
+
             
             
     def end_game(self,player:Player) -> None:
@@ -486,13 +391,14 @@ class Game:
     def one_play(self):
         # 洗牌，清空彩池
         self.new_game()
-        if self.pot != 0:
-            print('1',self.pot)
+        
+        initial_money=[0] * self.players_num
+        for i in range(self.players_num):
+            initial_money[i] = self.players[i].money
         
         # 给每个玩家发手牌
         self.deal_card()
-        if self.pot != 0:
-            print('2',self.pot)
+
         
         # 第一轮下注
         self.action_first_round()
@@ -502,6 +408,7 @@ class Game:
         if len(self.rest_players) == 1:
             # if
             self.end_game(self.rest_players[0])
+            
             return
         elif len(self.rest_players) == 0 and len(self.allin) != 0:
             self.deal_public_cards(3)
@@ -527,7 +434,7 @@ class Game:
             return
         
         # 发转牌
-        self.deal_public_cards(1,1)
+        self.deal_public_cards(1,3)
         
         # 第三轮下注
         self.action(3)
@@ -541,7 +448,7 @@ class Game:
             return
         
         # 发河牌
-        self.deal_public_cards(1,2)
+        self.deal_public_cards(1,4)
         
         # 第四轮下注
         self.action(4)
@@ -566,16 +473,7 @@ class Game:
 
         
             
-            
-def get_card_suit_id(card_id):
-    return card_id & 3
 
-def get_card_num_id(card_id):
-    return (card_id >> 2)
-    
-def oo(n1,n2):
-    n1 += 1
-    n2 += 2
 
 if __name__ == "__main__":
     
@@ -585,6 +483,7 @@ if __name__ == "__main__":
     Amy = Player('3',3,400,root)
     Cat = Player('4',4,400,root)
     Dog = Player('5',5,400,root)
+    
     players_list = [Jack,Bob,Amy,Cat,Dog]
     game = Game(players_list)
     # game.delete_player(0)
@@ -609,35 +508,33 @@ if __name__ == "__main__":
     # game.show_hand()
     # for i in game.players:
     #     print(i.score)
-    s = time.time()
-    # i = 0
-    for k in range(100):
-        for l in game.players:
-            l.money = 400
-        for i in range(10):
-            print("game: ",k*10+i)
-            game.one_play()
-            # time.sleep(3)
-            i+=1
-            sum = 0
-            for j in game.players:
-                sum += j.money
+    # s = time.time()
+    # # i = 0
+    # for k in range(100):
+    #     for l in game.players:
+    #         l.money = 400
+    #     for i in range(10):
+    #         print("game: ",k*10+i)
+    #         game.one_play()
+    #         # time.sleep(3)
+    #         i+=1
+    #         sum = 0
+    #         for j in game.players:
+    #             sum += j.money
                 
-            if sum != 2000:
-                print(sum)
-                break
+    #         if sum != 2000:
+    #             print(sum)
+    #             break
 
                 
-    e = time.time()
-    print(e-s)
-    # np.random.seed(0)
-    # p = np.array([0.1 / 0.4,0.3 / 0.4])
-    # for i in range(20):
-    #     print(np.random.choice([1,2] , p = p.ravel()))
-    # hand = [5,45]
-    # print(eval_hand(hand))
-    # display_hand(hand)
-    # int("-------------------------------------------------------------------------------------------------------")
+    # e = time.time()
+    # print(e-s)
+    game.deal_card()
+    game.deal_public_cards(3,2)
+    game.deal_public_cards(1,3)
+    game.deal_public_cards(1,4)
+    Jack.hand_num = eval_hand(Jack.hand)
+    MCCFR.simulate_game(game,Jack,[400,400,400,400,400])
         
         
 
