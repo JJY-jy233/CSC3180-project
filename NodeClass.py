@@ -135,7 +135,6 @@ class RootNode:
                 self.nodes[i].decisions[t].extend_node(new_node)
 
         for i in range(169):
-
             for t in range(1, len(self.nodes[i].decisions)):
                 for j in range(1, len(self.nodes[i].decisions[t].decisions)):
                     new_node = DecisionNode()
@@ -143,7 +142,6 @@ class RootNode:
                         new_node)  # create the dicisions after the third round
 
         for i in range(169):
-            new_node = DecisionNode()
             for t in range(1, len(self.nodes[i].decisions)):
                 for j in range(1, len(self.nodes[i].decisions[t].decisions)):
                     for n in range(1, len(self.nodes[i].decisions[t].decisions[j].decisions)):
@@ -239,3 +237,5 @@ class RootNode:
                         for n in range(len(self.nodes[i].decisions[t].decisions[j].decisions)):
                             self.nodes[i].decisions[t].decisions[j].decisions[n].decisions_p = pickle.load(
                                 f)
+
+
