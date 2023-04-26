@@ -53,7 +53,18 @@ class DecisionNode():
 
     def compute_value(self):
         self.value = self.decisions[0].value * self.decisions_p[0] + self.decisions[1].value * self.decisions_p[1] + self.decisions[2].value * self.decisions_p[2] + self.decisions[3].value * self.decisions_p[3] + self.decisions[4].value * self.decisions_p[4] + self.decisions[5].value * self.decisions_p[5] + self.decisions[6].value * self.decisions_p[6] \
-
+    
+    def change_p(self):
+        average_value = 0
+        sum_value = 0
+        for i in range(len(self.decisions)):
+            sum_value += self.decisions[i].value
+        average_value = sum_value / len(self.decisions)
+        for i  in range(len(self.decisions_p)):
+            self.decisions_p[i] += 0.00001* (self.decisions[i].value-average_value)
+        
+        
+        
     # def extend_resultnode(self, node):
     #     for i in range(len(self.decisions)):
     #         self.decisions[i] = node
@@ -150,19 +161,23 @@ class RootNode:
             for t in range(1, len(self.nodes[i].decisions)):
                 for j in range(1, len(self.nodes[i].decisions[t].decisions)):
                     for n in range(1, len(self.nodes[i].decisions[t].decisions[j].decisions)):
+                        self.nodes[i].decisions[t].decisions[j].decisions[n].change_p()
                         self.nodes[i].decisions[t].decisions[j].decisions[n].compute_value(
                         )
 
         for i in range(169):
             for t in range(1, len(self.nodes[i].decisions)):
                 for j in range(1, len(self.nodes[i].decisions[t].decisions)):
+                    self.nodes[i].decisions[t].decisions[j].change_p()
                     self.nodes[i].decisions[t].decisions[j].compute_value()
 
         for i in range(169):
             for t in range(1, len(self.nodes[i].decisions)):
+                self.nodes[i].decisions[t].change_p()
                 self.nodes[i].decisions[t].compute_value()
 
         for i in range(169):
+            self.nodes[i].change_p()
             self.nodes[i].compute_value()
 
     def store_p(self):
@@ -205,6 +220,8 @@ class RootNode:
 
 
 root = RootNode()
-root.nodes[10].decisions[1].decisions[1].decisions[1].decisions[1].value = 10
+root.nodes[10].decisions[1].decisions[1].decisions[1].decisions[0].value = 6
 root.update()
-print(root.nodes[10].decisions[1].decisions[1].value)
+print(root.nodes[10].decisions[1].decisions[1].decisions[1].decisions_p)
+# print(root.nodes[10].decisions[1].decisions[1].value)
+print(root.nodes[10].decisions_p)
