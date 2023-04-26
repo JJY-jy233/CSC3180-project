@@ -497,7 +497,8 @@ class Matrix:
                             if i*13-1 + (12-row) in self_player.hand or j*13-1 + (12-row) in self_player.hand:
                                 continue
                             if self.return_possibility(row,col) > 1:
-                                print(row,col,self.return_possibility(row,col))
+                                # print(row,col,self.return_possibility(row,col))
+                                self.return_possibility(row,col)
                             conditional_winning_possibility[i][j] +=  self.m_show_hand(public_cards, self_player,temp_player) * self.return_possibility(row,col)
                 else:
                     for row in range(13):
@@ -518,7 +519,7 @@ class Matrix:
                     multiplier = 2      
                 win_count +=  multiplier* conditional_winning_possibility[i][j]      
                 sum_count +=  multiplier         
-        print(conditional_winning_possibility)              
+        # print(conditional_winning_possibility)              
         return win_count/sum_count
 
 class Player:
@@ -675,13 +676,14 @@ class Player:
         # action_label = self.tree
         # random.choice(["check","call",'asd'])
         
-        if round == 1:
-            win_pos = self.matrix.return_winning_possibility([], self)
-        else:
-            self.matrix.second_bet_update(
-                self.last_wager, self.money, self.init_money, self.states[round-1].public_cards)
-            win_pos = self.matrix.return_winning_possibility(
-                self.states[round-1].public_cards, self)
+        # if round == 1:
+        #     win_pos = 0.5
+        # else:
+        #     self.matrix.second_bet_update(
+        #         self.last_wager, self.money, self.init_money, self.states[round-1].public_cards)
+        #     win_pos = self.matrix.return_winning_possibility(
+        #         self.states[round-1].public_cards, self)
+        win_pos = 0.5
         np.random.seed(0)
         # 没人下注的话，可以check和bet（一般不直接fold）S
         if ((max_bet - self.current_bet) == 0):

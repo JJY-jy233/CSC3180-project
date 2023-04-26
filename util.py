@@ -135,7 +135,7 @@ def get_max_score(seven_cards:list) -> tuple:
             res = [(t, v, cards)]
         elif t == max_type:
             res.append((t, v, cards))
-    print(res)
+    # print(res)
     max_value = get_value(*res[0])
     for r in res[1:]:
         value = get_value(*r)

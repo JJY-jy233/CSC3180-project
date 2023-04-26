@@ -55,8 +55,9 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
     current_money = player.money
     node = player.tree.nodes[player.hand_num].decisions
     p1 = 0
-    for i in range(len(node)):
+    for i in range(7):
         
+        node = player.tree.nodes[player.hand_num].decisions
         # 重置彩池
         game.pot = p1
         # 重置剩余玩家
@@ -101,11 +102,12 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
             pass
         
         # 进入下一个node
-        node = node[i].decisions
+        # node = node[i].decisions
         
         # round 2
-        for j in range(len(node)):
+        for j in range(7):
             
+            node = player.tree.nodes[player.hand_num].decisions[i].decisions
             # 重置彩池，等于第一轮结束时的彩池
             game.pot = p2
             # 重置玩家
@@ -152,11 +154,12 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
                 pass
                 
                 
-            node = node[j].decisions
+            # node = node[j].decisions
             
             # round 3
-            for k in range(len(node)):
+            for k in range(7):
                 
+                node = player.tree.nodes[player.hand_num].decisions[i].decisions[j].decisions
                 # 重置彩池，等于第一轮结束时的彩池
                 game.pot = p3
                 # 重置玩家
@@ -191,8 +194,9 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
                         node[k].value = -(current_money - player.money)
                     continue    
                     
-                
-                node = node[k].decisions
+                # print(k)
+                # print(type(node[k]))
+                # node = node[k].decisions
                 player_after_third_round = game.rest_players.copy()
                 
                 p4 = game.pot
@@ -202,6 +206,11 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
                 
                 # round 4
                 for l in range(len(node)):
+                    
+                    # if(i == 4 and j == 3 and k == 2):
+                    #     print(player.tree.nodes[player.hand_num].decisions[i].decisions[j].decisions[k])
+                    # print(player.hand_num,i,j,k)
+                    node = player.tree.nodes[player.hand_num].decisions[i].decisions[j].decisions[k].decisions
                     
                     game.pot = p4
                     game.rest_players = player_after_third_round.copy()
@@ -230,5 +239,5 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
                         if game.show_hand(player) == 1: # player 赢了
                             node[l].value = game.pot - (current_money - player.money)
                         else: # 输了
-                            node[l] = -(current_money - player.money)
+                            node[l].value = -(current_money - player.money)
                 

@@ -175,8 +175,8 @@ class Game:
         for i in range(2):
             for j in range(self.players_num):
                 self.rest_players[j].hand.append(self.cards[self.card_position])
-                if (len(self.rest_players[j].hand)) > 2:
-                    print(self.rest_players[j].hand)
+                # if (len(self.rest_players[j].hand)) > 2:
+                #     print(self.rest_players[j].hand)
                 self.card_position += 1 
         for k in range(self.players_num):
             self.rest_players[k].hand_num = eval_hand(self.rest_players[k].hand)
@@ -533,8 +533,19 @@ if __name__ == "__main__":
     game.deal_public_cards(3,2)
     game.deal_public_cards(1,3)
     game.deal_public_cards(1,4)
-    Jack.hand_num = eval_hand(Jack.hand)
+    # Jack.hand_num = eval_hand(Jack.hand)
+    print(Jack.hand_num)
+    print(Jack.tree.nodes[Jack.hand_num].decisions[2].decisions[2].decisions[2].decisions[2].value)
+    print(Jack.tree.nodes[Jack.hand_num].decisions[2].decisions[2].decisions[2].decisions[3].value)
+    
+# player.tree.nodes[player.hand_num].decisions[i].decisions[j].decisions[k].decisions
+    
     MCCFR.simulate_game(game,Jack,[400,400,400,400,400])
+    print(Jack.tree.nodes[Jack.hand_num].decisions[2].decisions[2].decisions[2].decisions[2].value)
+    print(Jack.tree.nodes[Jack.hand_num].decisions[2].decisions[2].decisions[2].decisions[3].value)
+    
+
+    
         
         
 
