@@ -53,8 +53,10 @@ class DecisionNode():
         pass
 
     def compute_value(self):
-        self.value = self.decisions[0].value * self.decisions_p[0] + self.decisions[1].value * self.decisions_p[1] + self.decisions[2].value * self.decisions_p[2] + self.decisions[3].value * self.decisions_p[3] + self.decisions[4].value * self.decisions_p[4] + self.decisions[5].value * self.decisions_p[5] + self.decisions[6].value * self.decisions_p[6] \
-
+        self.value = self.decisions[0].value * self.decisions_p[0] + self.decisions[1].value * self.decisions_p[1] + self.decisions[2].value * self.decisions_p[2] + self.decisions[3].value * \
+            self.decisions_p[3] + self.decisions[4].value * self.decisions_p[4] + \
+            self.decisions[5].value * self.decisions_p[5] + \
+            self.decisions[6].value * self.decisions_p[6]
 
     def change_p(self):
         average_value = 0
@@ -127,15 +129,16 @@ class RootNode:
             self.nodes[i].extend_node(new_node)
 
         for i in range(169):
-            new_node = DecisionNode()
             for t in range(1, len(self.nodes[i].decisions)):
                 # create the dicisions after the second round
+                new_node = DecisionNode()
                 self.nodes[i].decisions[t].extend_node(new_node)
 
         for i in range(169):
-            new_node = DecisionNode()
+
             for t in range(1, len(self.nodes[i].decisions)):
                 for j in range(1, len(self.nodes[i].decisions[t].decisions)):
+                    new_node = DecisionNode()
                     self.nodes[i].decisions[t].decisions[j].extend_node(
                         new_node)  # create the dicisions after the third round
 
@@ -144,6 +147,7 @@ class RootNode:
             for t in range(1, len(self.nodes[i].decisions)):
                 for j in range(1, len(self.nodes[i].decisions[t].decisions)):
                     for n in range(1, len(self.nodes[i].decisions[t].decisions[j].decisions)):
+                        new_node = DecisionNode()
                         self.nodes[i].decisions[t].decisions[j].decisions[n].extend_node(
                             new_node)  # create the dicisons after the fourth round
 
