@@ -5,6 +5,7 @@ import pickle
 class ResultNode:
     def __init__(self):
         self.value = 1
+        self.is_end=True
         pass
 
     def change_util(self, util):
@@ -14,7 +15,7 @@ class ResultNode:
 
 class DecisionNode():
     def __init__(self):
-
+        self.is_end = False
         self.check_p = 0.2
         self.check = None
         self.call_p = 0.2
@@ -61,9 +62,13 @@ class DecisionNode():
             sum_value += self.decisions[i].value
         average_value = sum_value / len(self.decisions)
         for i  in range(len(self.decisions_p)):
-            self.decisions_p[i] += 0.00001* (self.decisions[i].value-average_value)
+            self.decisions_p[i] +=  0.00001*(self.decisions[i].value-average_value)
         
-        
+    def pass_value(self):
+        for i in range(len(self.decisions)):
+            self.decisions[i].value = self.value
+            if self.decisions[i].is_end == False:
+                self.decisions[i].pass_value()
         
     # def extend_resultnode(self, node):
     #     for i in range(len(self.decisions)):
@@ -219,9 +224,11 @@ class RootNode:
                                 f)
 
 
-root = RootNode()
-root.nodes[10].decisions[1].decisions[1].decisions[1].decisions[0].value = 6
-root.update()
-print(root.nodes[10].decisions[1].decisions[1].decisions[1].decisions_p)
-# print(root.nodes[10].decisions[1].decisions[1].value)
-print(root.nodes[10].decisions_p)
+# root = RootNode()
+# root.nodes[10].decisions[1].decisions[1].value = 100
+# root.nodes[10].decisions[1].decisions[1].pass_value()
+# print(root.nodes[10].decisions[1].decisions[1].decisions[1].value)
+# root.update()
+# print(root.nodes[10].decisions[1].decisions[1].decisions[1].decisions_p)
+# # print(root.nodes[10].decisions[1].decisions[1].value)
+# print(root.nodes[10].decisions_p)
