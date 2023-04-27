@@ -549,6 +549,9 @@ if __name__ == "__main__":
     game.deal_card()
     game.action_first_round()
     print(game.states[0].rest_players)
+    if len(game.rest_players) == 0 and len(game.allin) != 0:
+        print(game.allin)
+        
     game.deal_public_cards(3,2)
     game.action(2)
     print(game.states[1].rest_players)

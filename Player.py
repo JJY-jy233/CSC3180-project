@@ -569,8 +569,9 @@ class Player:
         self.fourth_choice = None
         self.hand_num = None
         self.states: list[State] = [None, None, None, None]
-        self.matrix: Matrix = Matrix()
+        self.matrice: list[Matrix] = []
         self.last_wager = 0
+        self.character = 0
 
         # self.second_state:State = None
 
