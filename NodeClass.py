@@ -87,6 +87,16 @@ class DecisionNode():
             if self.decisions[i].is_end == False:
                 self.decisions[i].pass_value()
 
+    def update(self):
+        if self.decisions[1].is_end == True:
+            self.change_p()
+            self.compute_value()
+        else:
+            for i in range(1, len(self.decisions)):
+                self.decisions[i].update()
+            self.change_p()
+            self.compute_value()
+
     # def extend_resultnode(self, node):
     #     for i in range(len(self.decisions)):
     #         self.decisions[i] = node
@@ -138,14 +148,14 @@ class RootNode:
             for t in range(1, len(self.nodes[i].decisions)):
                 for j in range(1, len(self.nodes[i].decisions[t].decisions)):
                     self.nodes[i].decisions[t].decisions[j].extend_node(
-                        )  # create the dicisions after the third round
+                    )  # create the dicisions after the third round
 
         for i in range(169):
             for t in range(1, len(self.nodes[i].decisions)):
                 for j in range(1, len(self.nodes[i].decisions[t].decisions)):
                     for n in range(1, len(self.nodes[i].decisions[t].decisions[j].decisions)):
                         self.nodes[i].decisions[t].decisions[j].decisions[n].extend_node(
-                            )  # create the dicisons after the fourth round
+                        )  # create the dicisons after the fourth round
 
         for i in range(169):
             for t in range(1, len(self.nodes[i].decisions)):
