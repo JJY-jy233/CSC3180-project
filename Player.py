@@ -10,9 +10,10 @@ from util import *
 
 
 class Matrix:
-    def __init__(self):
+    def __init__(self,player = None):
         self.matrix = [[1]*(13) for _ in range(13)]
         self.precentage_sum = 13*13
+        self.owner:Player = player
 
         self.upper_precentage_sum = 12+12*11/2
         self.lower_precentage_sum = 13+13*12/2
@@ -566,11 +567,11 @@ class Player:
         self.fourth_choice = None
         self.hand_num = None
         self.states: list[State] = [None, None, None, None]
-        self.matrix1 = Matrix()
-        self.matrix2 = Matrix()
-        self.matrix3 = Matrix()
-        self.matrix4 = Matrix()
-        self.matrix5 = Matrix()
+        self.matrice:list[Matrix] = []
+        # self.matrix2 = Matrix()
+        # self.matrix3 = Matrix()
+        # self.matrix4 = Matrix()
+        # self.matrix5 = Matrix()
         
 
         self.last_wager = 0
