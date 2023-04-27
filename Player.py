@@ -571,7 +571,7 @@ class Player:
         self.states: list[State] = [None, None, None, None]
         self.matrice: list[Matrix] = []
         self.last_wager = 0
-        self.character = 0
+        self.character = 1
         self.bet_number = 0
         # self.second_state:State = None
 
@@ -858,17 +858,6 @@ class Player:
                     self.bet_number = int(input("Please input your raise number:"))
 
         # action_label = 4
-        if round == 1:
-
-            self.first_choice = action_label
-        elif round == 2:
-            self.second_choice = action_label
-
-        elif round == 3:
-            self.third_choice = action_label
-
-        elif round == 4:
-            self.fourth_choice = action_label
 
         if action_label == 0:
             money = self.fold()
@@ -902,10 +891,22 @@ class Player:
                 action_label =5
             if  self.bet_number > 5:
                 action_label =6
-            
+
+        if round == 1:
+
+            self.first_choice = action_label
+        elif round == 2:
+            self.second_choice = action_label
+
+        elif round == 3:
+            self.third_choice = action_label
+
+        elif round == 4:
+            self.fourth_choice = action_label    
         if money > 0:
             self.last_wager = self.current_bet
         return money
+
 
     def get_max_score(self) -> None:
 
