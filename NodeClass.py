@@ -39,7 +39,7 @@ class DecisionNode():
         self.over = False
         # by calling decisions[i] to decide which action to take
         # eg:decisions[0] means "check"
-        self.decisions = [self.fold, self.check, self.call, self.bet,
+        self.decisions:list[DecisionNode] = [self.fold, self.check, self.call, self.bet,
                           self.rs_1_3, self.rs_3_5, self.rs_5]
         self.decisions_p = [self.fold_p, self.check_p, self.call_p,  self.bet_p,
                             self.rs_1_3_p, self.rs_3_5_p, self.rs_5_p]
@@ -130,7 +130,7 @@ class DecisionNode():
 
 class RootNode:
     def __init__(self):
-        self.nodes = []
+        self.nodes:list[DecisionNode] = []
         for i in range(169):
             node = DecisionNode()
             self.nodes.append(node)  # create the dicisions at the begining
@@ -248,3 +248,11 @@ class RootNode:
                             self.nodes[i].decisions[t].decisions[j].decisions[n].decisions_p = pickle.load(
                                 f)
             f.close()
+
+
+r1 = RootNode()
+r = RootNode()
+r.nodes[0].decisions_p = [1,0,0,0,45,0,0]
+r.store_p('oo.pkl')
+r1.read_p('oo.pkl')
+print(r1.nodes[0].decisions_p)
