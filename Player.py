@@ -715,7 +715,11 @@ class Player:
             sum_pos = 0
             player_number = 0
             for i in self.matrice:
-                if i.owner != self and self.states[0].rest_players.find(self)!=-1:
+                if i.owner in self.states[0].rest_players:
+                    i_fold = False
+                else:
+                    i_fold = True
+                if i.owner != self and i_fold == False:
                     sum_pos += i.return_winning_possibility([], self)
                     player_number += 1
             win_pos = sum_pos / player_number
@@ -723,7 +727,11 @@ class Player:
             sum_pos = 0
             player_number = 0
             for i in self.matrice:
-                if i.owner != self and self.states[round - 1].rest_players.find(self)!=-1:
+                if i.owner in self.states[round - 1].rest_players:
+                    i_fold = False
+                else:
+                    i_fold = True
+                if i.owner != self and i_fold == False:
                     sum_pos += i.return_winning_possibility(self.states[round - 1].public_cards, self)
                     player_number += 1
             win_pos = sum_pos / player_number
