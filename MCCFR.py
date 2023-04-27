@@ -74,7 +74,7 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
     k = 0
     l = 0
     for i in range(7):
-        
+        print('i',i)
         # node = player.tree.nodes[player.hand_num].decisions
         # 重置彩池
         game.pot = p1
@@ -158,6 +158,7 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
         # round 2
         for j in range(7):
             print(format(((i*7+j) / (7*7+7)) , '.0%'))
+            print('j',j)
             # print(i,j,k,l)
             # node = player.tree.nodes[player.hand_num].decisions[i].decisions
             # 重置彩池，等于第一轮结束时的彩池
@@ -241,7 +242,7 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
             
             # round 3
             for k in range(7):
-                
+                print('k',k)
                 # node = player.tree.nodes[player.hand_num].decisions[i].decisions[j].decisions
                 # 重置彩池，等于第一轮结束时的彩池
                 game.pot = p3
@@ -319,7 +320,7 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
                 
                 # round 4
                 for l in range(7):
-                    print(i,j,k,l)
+                    print('l',l)
                     if i == 2 and j==4 and k == 6 and l ==6:
                         print(i,j,k,l)
                     # print(player.tree.nodes[player.hand_num].decisions[6].decisions[4].decisions[4].decisions[3].value)

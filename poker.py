@@ -601,8 +601,12 @@ if __name__ == "__main__":
     Jack.tree.nodes[Jack.hand_num].update()
     print(Jack.name,"finish","hand_num:",Jack.hand_num)
     print(Jack.tree.nodes[Jack.hand_num].decisions_p)
-    Jack.tree.store_p('t1.pkl')
+    Jack.tree.store_p('t3.pkl')
     print(Jack.tree.nodes[Jack.hand_num].decisions_p)
+    
+    r = NodeClass.RootNode()
+    r.read_p('t3.pkl')
+    print(r.nodes[Jack.hand_num].decisions_p)
 
     
 
