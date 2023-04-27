@@ -571,8 +571,8 @@ class Player:
         self.states: list[State] = [None, None, None, None]
         self.matrice: list[Matrix] = []
         self.last_wager = 0
-        self.character = 0
-
+        self.character = 1
+        self.bet_number = 0
         # self.second_state:State = None
 
         # self.third_state:State = None
@@ -725,6 +725,10 @@ class Player:
             player_number = 0
             for i in self.matrice:
                 i_fold = False
+                if i.owner in self.states[0].rest_players:
+                    i_fold = False
+                else:
+                    i_fold = True
                 if i.owner != self and i_fold == False:
                     sum_pos += i.return_winning_possibility([], self)
                     player_number += 1
@@ -734,6 +738,7 @@ class Player:
             player_number = 0
             for i in self.matrice:
                 i_fold = False
+                print(i.owner in self.states[round - 1].rest_players)
                 if i.owner in self.states[round - 1].rest_players:
                     i_fold = False
                 else:
@@ -748,52 +753,109 @@ class Player:
 
             
         np.random.seed(0)
-        win_pos = 0.5
+        # win_pos = 0.5
         # # 没人下注的话，可以check和bet（一般不直接fold）S
-        if ((max_bet - self.current_bet) == 0):
-            sum = self.p_l[1] + self.p_l[3]
-            p1 = self.p_l[1] / sum / 2 + (1-win_pos) / 2
-            p2 = self.p_l[3] / sum / 2 + win_pos / 2
-            p = np.array([p1, p2])
-            action_label = np.random.choice([1, 3], p=p.ravel())
+        if self.character == 0:
+            if ((max_bet - self.current_bet) == 0):
+                sum = self.p_l[1] + self.p_l[3]
+                p1 = self.p_l[1] / sum / 2 + (1-win_pos) / 2
+                p2 = self.p_l[3] / sum / 2 + win_pos / 2
+                p = np.array([p1, p2])
+                action_label = np.random.choice([1, 3], p=p.ravel())
 
-        # 有人下注就不能check，只能fold，call，raise
-        else:
-            sum = self.p_l[0] + self.p_l[2] + \
-                self.p_l[4] + self.p_l[5] + self.p_l[6]
-            if win_pos < 0.4:
-                p1 = self.p_l[0] / sum / 2 + (1-win_pos)/2
-                p2 = self.p_l[2] / sum / 2 + win_pos/8
-                p3 = self.p_l[4] / sum / 2 + win_pos/8
-                p4 = self.p_l[5] / sum / 2 + win_pos/8
-                p5 = self.p_l[6] / sum / 2 + win_pos/8
-            elif win_pos >= 0.4 and win_pos < 0.55:
-                p1 = self.p_l[0] / sum / 2 + (1-win_pos)/8
-                p2 = self.p_l[2] / sum / 2 + win_pos/2
-                p3 = self.p_l[4] / sum / 2 + (1-win_pos)/8
-                p4 = self.p_l[5] / sum / 2 + (1-win_pos)/8
-                p5 = self.p_l[6] / sum / 2 + (1-win_pos)/8
-            elif win_pos >= 0.55 and win_pos < 0.7:
-                p1 = self.p_l[0] / sum / 2 + (1-win_pos)/8
-                p2 = self.p_l[2] / sum / 2 + (1-win_pos)/8
-                p3 = self.p_l[4] / sum / 2 + win_pos/2
-                p4 = self.p_l[5] / sum / 2 + (1-win_pos)/8
-                p5 = self.p_l[6] / sum / 2 + (1-win_pos)/8
-            elif win_pos >= 0.7 and win_pos < 0.85:
-                p1 = self.p_l[0] / sum / 2 + (1-win_pos)/8
-                p2 = self.p_l[2] / sum / 2 + (1-win_pos)/8
-                p3 = self.p_l[4] / sum / 2 + (1-win_pos)/8
-                p4 = self.p_l[5] / sum / 2 + win_pos/2
-                p5 = self.p_l[6] / sum / 2 + (1-win_pos)/8
-            elif win_pos >= 0.85 and win_pos <= 1:
-                p1 = self.p_l[0] / sum / 2 + (1-win_pos)/8
-                p2 = self.p_l[2] / sum / 2 + (1-win_pos)/8
-                p3 = self.p_l[4] / sum / 2 + (1-win_pos)/8
-                p4 = self.p_l[5] / sum / 2 + (1-win_pos)/8
-                p5 = self.p_l[6] / sum / 2 + win_pos/2
-            p = np.array([p1, p2, p3, p4, p5])
-            action_label = np.random.choice([0, 2, 4, 5, 6], p=p.ravel())
-            action_label = random.choice([0,3,4,5,6])
+            # 有人下注就不能check，只能fold，call，raise
+            else:
+                sum = self.p_l[0] + self.p_l[2] + \
+                    self.p_l[4] + self.p_l[5] + self.p_l[6]
+                if win_pos < 0.4:
+                    p1 = self.p_l[0] / sum / 2 + (1-win_pos)/2
+                    p2 = self.p_l[2] / sum / 2 + win_pos/8
+                    p3 = self.p_l[4] / sum / 2 + win_pos/8
+                    p4 = self.p_l[5] / sum / 2 + win_pos/8
+                    p5 = self.p_l[6] / sum / 2 + win_pos/8
+                elif win_pos >= 0.4 and win_pos < 0.55:
+                    p1 = self.p_l[0] / sum / 2 + (1-win_pos)/8
+                    p2 = self.p_l[2] / sum / 2 + win_pos/2
+                    p3 = self.p_l[4] / sum / 2 + (1-win_pos)/8
+                    p4 = self.p_l[5] / sum / 2 + (1-win_pos)/8
+                    p5 = self.p_l[6] / sum / 2 + (1-win_pos)/8
+                elif win_pos >= 0.55 and win_pos < 0.7:
+                    p1 = self.p_l[0] / sum / 2 + (1-win_pos)/8
+                    p2 = self.p_l[2] / sum / 2 + (1-win_pos)/8
+                    p3 = self.p_l[4] / sum / 2 + win_pos/2
+                    p4 = self.p_l[5] / sum / 2 + (1-win_pos)/8
+                    p5 = self.p_l[6] / sum / 2 + (1-win_pos)/8
+                elif win_pos >= 0.7 and win_pos < 0.85:
+                    p1 = self.p_l[0] / sum / 2 + (1-win_pos)/8
+                    p2 = self.p_l[2] / sum / 2 + (1-win_pos)/8
+                    p3 = self.p_l[4] / sum / 2 + (1-win_pos)/8
+                    p4 = self.p_l[5] / sum / 2 + win_pos/2
+                    p5 = self.p_l[6] / sum / 2 + (1-win_pos)/8
+                elif win_pos >= 0.85 :
+                    p1 = self.p_l[0] / sum / 2 + (1-win_pos)/8
+                    p2 = self.p_l[2] / sum / 2 + (1-win_pos)/8
+                    p3 = self.p_l[4] / sum / 2 + (1-win_pos)/8
+                    p4 = self.p_l[5] / sum / 2 + (1-win_pos)/8
+                    p5 = self.p_l[6] / sum / 2 + win_pos/2
+                p = np.array([p1, p2, p3, p4, p5])
+                action_label = np.random.choice([0, 2, 4, 5, 6], p=p.ravel())
+        elif self.character == 1:
+            if ((max_bet - self.current_bet) == 0):
+                print("Your money: ", self.money, "Current bet: ", max_bet)
+                print("Legal actions: Check, Bet")
+                sum = self.p_l[1] + self.p_l[3]
+                p1 = self.p_l[1] / sum / 2 + (1-win_pos) / 2
+                p2 = self.p_l[3] / sum / 2 + win_pos / 2
+                p1_p = format(p1, '.0%')
+                p2_p = format(p2, '.0%')
+                print("Winning possibliliy:"," Check: ",p1_p, " Bet: ",p2_p)
+                action_label = int(input("Please input your action (1 for check, 3 for bet):"))
+            else:
+                print("Your money:", self.money, "Current bet:", max_bet, "Call money:", float(max_bet - self.current_bet) )
+                print("Legal actions: Fold, Call, Raise 1-3, Raise 3-5, Raise over 5")
+                sum = self.p_l[0] + self.p_l[2] + \
+                    self.p_l[4] + self.p_l[5] + self.p_l[6]
+                if win_pos < 0.4:
+                    p1 = self.p_l[0] / sum / 2 + (1-win_pos)/2
+                    p2 = self.p_l[2] / sum / 2 + win_pos/8
+                    p3 = self.p_l[4] / sum / 2 + win_pos/8
+                    p4 = self.p_l[5] / sum / 2 + win_pos/8
+                    p5 = self.p_l[6] / sum / 2 + win_pos/8
+                elif win_pos >= 0.4 and win_pos < 0.55:
+                    p1 = self.p_l[0] / sum / 2 + (1-win_pos)/8
+                    p2 = self.p_l[2] / sum / 2 + win_pos/2
+                    p3 = self.p_l[4] / sum / 2 + (1-win_pos)/8
+                    p4 = self.p_l[5] / sum / 2 + (1-win_pos)/8
+                    p5 = self.p_l[6] / sum / 2 + (1-win_pos)/8
+                elif win_pos >= 0.55 and win_pos < 0.7:
+                    p1 = self.p_l[0] / sum / 2 + (1-win_pos)/8
+                    p2 = self.p_l[2] / sum / 2 + (1-win_pos)/8
+                    p3 = self.p_l[4] / sum / 2 + win_pos/2
+                    p4 = self.p_l[5] / sum / 2 + (1-win_pos)/8
+                    p5 = self.p_l[6] / sum / 2 + (1-win_pos)/8
+                elif win_pos >= 0.7 and win_pos < 0.85:
+                    p1 = self.p_l[0] / sum / 2 + (1-win_pos)/8
+                    p2 = self.p_l[2] / sum / 2 + (1-win_pos)/8
+                    p3 = self.p_l[4] / sum / 2 + (1-win_pos)/8
+                    p4 = self.p_l[5] / sum / 2 + win_pos/2
+                    p5 = self.p_l[6] / sum / 2 + (1-win_pos)/8
+                elif win_pos >= 0.85 :
+                    p1 = self.p_l[0] / sum / 2 + (1-win_pos)/8
+                    p2 = self.p_l[2] / sum / 2 + (1-win_pos)/8
+                    p3 = self.p_l[4] / sum / 2 + (1-win_pos)/8
+                    p4 = self.p_l[5] / sum / 2 + (1-win_pos)/8
+                    p5 = self.p_l[6] / sum / 2 + win_pos/2
+                p1_p = format(p1, '.0%')
+                p2_p = format(p2, '.0%')
+                p3_p = format(p3+p4+p5, '.0%')
+                p4_p = format(p3, '.0%')
+                p5_p = format(p4, '.0%')
+                p6_p = format(p5, '.0%')                
+                print("Winning possibliliy:"," Fold: ",p1_p, " Call: ",p2_p, " Raise: ", p3_p)
+                action_label = int(input("Please input your action (0 for fold , 2 for call, 7 for raise):"))
+                if action_label == 7:
+                    print("Winning possibliliy:"," Raise1-3: ",p4_p," Raise3-5: ",p5_p," Raise over 5 ",p6_p)
+                    self.bet_number = int(input("Please input your raise number:"))
 
         # action_label = 4
         if round == 1:
@@ -822,6 +884,18 @@ class Player:
             money = self.Raise(max_bet, 3)
         elif action_label == 6:
             money = self.Raise(max_bet, 5)
+        elif action_label == 7:
+            
+            dif = self.bet_number * max_bet - self.current_bet
+            if self.money > dif:
+                self.money -= dif
+                self.current_bet += dif
+                money = dif
+            else:
+                allin = self.money
+                self.current_bet += allin
+                # self.money = 0
+                money = -3    
         if money > 0:
             self.last_wager = self.current_bet
         return money
