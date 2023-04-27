@@ -487,6 +487,7 @@ class Matrix:
         sum_count = 0
 
         if len(public_cards) == 0:
+            # print(self_player.hand)
             i = max(get_card_num_id(self_player.hand[0]),get_card_num_id(self_player.hand[1]))
             j = min(get_card_num_id(self_player.hand[0]),get_card_num_id(self_player.hand[1]))
 
@@ -571,7 +572,7 @@ class Player:
         self.states: list[State] = [None, None, None, None]
         self.matrice: list[Matrix] = []
         self.last_wager = 0
-        self.character = 1
+        self.character = 0
         self.bet_number = 0
         # self.second_state:State = None
 
@@ -657,7 +658,7 @@ class Player:
             return -3
 
     def fold(self) -> float:
-        self.hand = []
+        # self.hand = []
 
         return -2
 
@@ -720,11 +721,14 @@ class Player:
         #     p2 = self.p_l[3] / sum / 2 + win_pos / 2
         #     p = np.array([p1, p2])
         #     action_label = np.random.choice([1, 3], p=p.ravel()
+        
+        
         if round == 1:
             sum_pos = 0
             player_number = 0
             for i in self.matrice:
                 i_fold = False
+                # print("asdasdasd",self.states[0].rest_players)
                 if i.owner in self.states[0].rest_players:
                     i_fold = False
                 else:
@@ -738,7 +742,7 @@ class Player:
             player_number = 0
             for i in self.matrice:
                 i_fold = False
-                print(i.owner in self.states[round - 1].rest_players)
+                # print(i.owner in self.states[round - 1].rest_players)
                 if i.owner in self.states[round - 1].rest_players:
                     i_fold = False
                 else:
@@ -750,8 +754,9 @@ class Player:
                 win_pos = 0.5
             else:    
                 win_pos = sum_pos / player_number
-
-            
+        # win_pos = 0.5
+        if win_pos > 1:
+            win_pos = 1
         np.random.seed(0)
         # win_pos = 0.5
         # # 没人下注的话，可以check和bet（一般不直接fold）S

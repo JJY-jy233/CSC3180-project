@@ -44,6 +44,15 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
     player_after_second_round = []
     player_after_third_round = []
     
+    c_bet =  [0] * game.players_num
+    c_bet1 =  [0] * game.players_num
+    c_bet2 =  [0] * game.players_num
+    c_bet3 =  [0] * game.players_num
+    
+    m1 = [None] * game.players_num
+    m2 = [None] * game.players_num
+    m3 = [None] * game.players_num
+    m4 = [None] * game.players_num
     # game.deal_public_cards(3,2)
     # game.deal_public_cards(1,3)
     # game.deal_public_cards(1,4)
@@ -56,18 +65,28 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
     # print("hand",player.hand_num)
     # node = player.tree.nodes[player.hand_num].decisions
     p1 = 0
+    for ii in range(game.players_num):
+        c_bet[ii] = game.players[ii].current_bet
+        m1[ii] = game.players[ii].matrice.copy()
+    
     for i in range(7):
         
         # node = player.tree.nodes[player.hand_num].decisions
         # 重置彩池
         game.pot = p1
         # 重置剩余玩家
+        # print(i,game.rest_players)
         game.rest_players = game.players.copy()
+        # print(i,game.rest_players)
+
         # 重置玩家的钱
         for i1 in range(game.players_num):
             game.players[i1].money = players_original_money[i1]
+            game.players[i1].current_bet = c_bet[i1]
+            game.players[i1].matrice = m1[i1].copy()
         
         # print("i",i)
+        
         # 弃牌的话 这个node的utility等于损失的钱
         if i == 0: # fold
             game.action_first_round(player,i)
@@ -78,8 +97,19 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
         if not (game.action_first_round(player,i)): # 如果不成功
             flag = False
             for t in range(3): # 尝试三次
+                game.pot = p1
+                # 重置玩家
+                game.rest_players = game.players.copy()
+                
+                # 重置玩家的钱
+                for i2 in range(game.players_num):
+                    game.players[i2].money = players_original_money[i2]
+                    game.players[i2].current_bet = c_bet[i2]
+                    game.players[i2].matrice = m1[i2].copy()
+                    
                 flag = game.action_first_round(player,i) 
                 if flag: # 如果成功了，继续往下
+                    
                     break
             if not flag:
                 continue
@@ -114,6 +144,8 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
         p2 = game.pot
         for num in range(game.players_num):
             player_money_after_first_round[num] = game.players[num].money
+            c_bet1[num] = game.players[num].current_bet
+            m2[num] = game.players[num].matrice.copy()
             pass
         
         # 进入下一个node
@@ -131,6 +163,8 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
             # 重置玩家的钱
             for j1 in range(game.players_num):
                 game.players[j1].money = player_money_after_first_round[j1]
+                game.players[j1].current_bet = c_bet1[j1]
+                game.players[j1].matrice = m2[j1].copy()
                 
             # print("j",j)
             if j == 0: # fold
@@ -141,8 +175,19 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
             if not (game.action(2,player,j)): # 如果不成功
                 flag = False
                 for t1 in range(3): # 尝试三次
+                    game.pot = p2
+                    # 重置玩家
+                    game.rest_players = player_after_first_round.copy()
+                    
+                    # 重置玩家的钱
+                    for j2 in range(game.players_num):
+                        game.players[j2].money = player_money_after_first_round[j2]
+                        game.players[j2].current_bet = c_bet1[j2]
+                        game.players[j2].matrice = m2[j2].copy()
+                        
                     flag = game.action(2,player,j) 
                     if flag: # 如果成功了，继续往下
+                        
                         break
                 if not flag:
                     continue
@@ -182,6 +227,8 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
             p3 = game.pot
             for num1 in range(game.players_num):
                 player_money_after_second_round[num1] = game.players[num1].money
+                c_bet2[num1] = game.players[num1].current_bet
+                m3[num1] = game.players[num1].matrice.copy()
                 pass
                 
                 
@@ -198,6 +245,8 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
                 # 重置玩家的钱
                 for k1 in range(game.players_num):
                     game.players[k1].money = player_money_after_second_round[k1]
+                    game.players[k1].current_bet = c_bet2[k1]
+                    game.players[k1].matrice = m3[k1].copy()
                 # print('k',k)
                 if k == 0: # fold
                     player.tree.nodes[player.hand_num].decisions[i].decisions[j].decisions[k].value = -(current_money - player.money)
@@ -206,8 +255,20 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
                 if not (game.action(3,player,k)): # 如果不成功
                     flag = False
                     for t2 in range(3): # 尝试三次
+                        # 重置彩池，等于第一轮结束时的彩池
+                        game.pot = p3
+                        # 重置玩家
+                        game.rest_players = player_after_second_round.copy()
+                        # 重置玩家的钱
+                        for k2 in range(game.players_num):
+                            game.players[k2].money = player_money_after_second_round[k2]
+                            game.players[k2].current_bet = c_bet2[k2] 
+                            game.players[k2].matrice = m3[k2].copy()
+                            
                         flag = game.action(2,player,k) 
                         if flag: # 如果成功了，继续往下
+                                  
+                                
                             break
                     if not flag:
                         continue
@@ -248,7 +309,8 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
                 p4 = game.pot
                 for num2 in range(game.players_num):
                     player_money_after_third_round[num2] = game.players[num2].money
-            
+                    c_bet3[num2] = game.players[num2].current_bet
+                    m4[num2] = game.players[num2].matrice.copy()
                 
                 # round 4
                 for l in range(7):
@@ -264,7 +326,8 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
                      # 重置玩家的钱
                     for l1 in range(game.players_num):
                         game.players[l1].money = player_money_after_third_round[l1]
-                        
+                        game.players[l1].current_bet = c_bet3[l1]
+                        game.players[l1].matrice = m4[l1].copy()
                     
                     if l == 0: # fold
                         player.tree.nodes[player.hand_num].decisions[i].decisions[j].decisions[k].decisions[l].value = -(current_money - player.money)
@@ -273,8 +336,18 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
                     if not (game.action(4,player,l)): # 如果不成功
                         flag = False
                         for t3 in range(3): # 尝试三次
+                            game.pot = p4
+                            game.rest_players = player_after_third_round.copy()
+                            # 重置玩家的钱
+                            for l1 in range(game.players_num):
+                                game.players[l1].money = player_money_after_third_round[l1]
+                                game.players[l1].current_bet = c_bet3[l1]
+                                game.players[l1].matrice = m4[l1].copy()
+                                
                             flag = game.action(4,player,l) 
                             if flag: # 如果成功了，继续往下
+                                
+                                    
                                 break
                         if not flag:
                             continue

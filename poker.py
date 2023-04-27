@@ -281,7 +281,6 @@ class Game:
                                 # if player_bet > 0:
                                 # print('update',pp1.name,'\'s',p.name,'matrix')
                                 # print(player_bet,p.money+player_bet)
-                                
                                 matrix1.second_bet_update(p.money,p.money,p.init_money,self.states[round-1].public_cards)
                 p.money = 0
                 i-=1
@@ -308,6 +307,7 @@ class Game:
 
                 last_p = p
                 # i-=1
+            # print(i,'+1')
             i+=1   
             if i > (len(self.rest_players) - 1):
                 i = 0
@@ -317,8 +317,8 @@ class Game:
             
             
     def action_first_round(self,player:Player = None,simulate:int = -1) -> None:
-        for i in self.rest_players:
-            i.current_bet = 0
+        for pplay in self.rest_players:
+            pplay.current_bet = 0
         i = 2
         # smallblinder = self.rest_players[0]
         last_p = self.rest_players[1]
@@ -340,10 +340,14 @@ class Game:
         
         max_bet = self.bigblind
         self.states[0].max_bet = max_bet
+        self.states[0].rest_players = self.rest_players.copy()
+        # print(i,game.rest_players)
         
+        # print('11')
         while len(self.rest_players) !=0:
-            
+            # print(self.rest_players , i)
             p = self.rest_players[i]
+            # print(p.hand)
             
             # simulate
             if p == player:
@@ -364,7 +368,7 @@ class Game:
                 player_bet = p.action(max_bet,1)
             self.pot += max(0,player_bet)
             self.states[0].round_pot += max(0,player_bet)
-            
+            # print("player_bet",player_bet)
             for pp in self.rest_players:
                 if pp != p:
                     for matrix in pp.matrice:
@@ -401,6 +405,7 @@ class Game:
                 i-=1
             # 弃牌，
             elif player_bet == -2:
+                # print(p.name,'fold')
                 self.rest_players.remove(p)
                 # print(p.name,"fold")
                 i-=1
@@ -422,9 +427,12 @@ class Game:
                     break
                 last_p = p
                 # i-=1
+            # print(i,"+1=", i+1)
             i+=1   
             if i > (len(self.rest_players) - 1):
+                
                 i = 0
+                # print(i)
         return True
 
             
@@ -514,7 +522,21 @@ class Game:
         
 
         
-
+    def sim_one_game(self):
+        self.new_game()
+        
+        initial_money=[0] * self.players_num
+        for i in range(self.players_num):
+            initial_money[i] = self.players[i].money
+            
+        self.deal_card()
+        self.deal_public_cards(3,2)
+        self.deal_public_cards(1,3)
+        self.deal_public_cards(1,4)
+        for i in self.players:
+            MCCFR.simulate_game(self,i,[1000,1000,1000,1000,1000])
+            i.tree.update()
+            # print(i.money)
         
               
             
@@ -526,11 +548,11 @@ class Game:
 if __name__ == "__main__":
     
     root = NodeClass.RootNode()
-    Jack = Player('1',1,400,root)
-    Bob = Player('2',2,400,root)
-    Amy = Player('3',3,400,root)
-    Cat = Player('4',4,400,root)
-    Dog = Player('5',5,400,root)
+    Jack = Player('1',1,1000,root)
+    Bob = Player('2',2,1000,root)
+    Amy = Player('3',3,1000,root)
+    Cat = Player('4',4,1000,root)
+    Dog = Player('5',5,1000,root)
     Jack_M = Matrix(Jack)
     Bob_M = Matrix(Bob)
     Amy_M = Matrix(Amy)
@@ -545,176 +567,8 @@ if __name__ == "__main__":
             if i == m.owner:
                 continue
             i.matrice.append(m)
-    
-    game.deal_card()
-    game.action_first_round()
-    print(game.states[0].rest_players)
-    if len(game.rest_players) == 0 and len(game.allin) != 0:
-        print(game.allin)
-        
-    game.deal_public_cards(3,2)
-    game.action(2)
-    print(game.states[1].rest_players)
-    game.deal_public_cards(1,3)
-    game.action(3)
-    print(game.states[2].rest_players)
-    game.deal_public_cards(1,4)
-    
-    game.action(4)
-    print(game.states[3].rest_players)
-    for i in game.rest_players:
-        print(i.money)
-    # for p in game.players:
-    #     for mm in p.matrice:
-    #         print(p.name,mm.owner.name)
-            
-    # game.delete_player(0)
-    # game.add_player(Jack)
-    # game.add_player(Cat)
-    # game.add_player(Dog)
-    # game.deal_card()
-    # for i in game.players:
-    #     i.action()
-    # for i in game.players:
-    #     print(i.name)
-    #     display_hand(i.hand)
-        
-    # game.deal_public_cards(3)
-    # display_hand(game.public_cards)
-    # game.deal_public_cards(1)
-    # display_hand(game.public_cards)
-    
-    # game.deal_public_cards(1)
-    # display_hand(game.public_cards)
-    
-    # game.show_hand()
-    # for i in game.players:
-    #     print(i.score)
-    # s = time.time()
-    # # i = 0
-    # for k in range(100):
-    #     for l in game.players:
-    #         l.money = 400
-    #     for i in range(10):
-    #         print("game: ",k*10+i)
-    #         game.one_play()
-    #         # time.sleep(3)
-    #         i+=1
-    #         sum = 0
-    #         for j in game.players:
-    #             sum += j.money
-                
-    #         if sum != 2000:
-    #             print(sum)
-    #             break
-
-             
-    # # e = time.time()
-    # # print(e-s)
-    # game.deal_card()
-    # game.deal_public_cards(3,2)
-    # game.deal_public_cards(1,3)
-    # game.deal_public_cards(1,4)
-    # sum = 0
-    # # Jack.hand = [50,51]
-    # # Jack.hand_num = 0
-    # display_hand(Jack.hand)
-    # # print(Jack.hand_num)
-    # MCCFR.simulate_game(game,Jack,[400,400,400,400,400])
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[4].decisions[3].value)
-    
-    # Jack.tree.update()
-    # MCCFR.simulate_game(game,Amy,[400,400,400,400,400])
-    # Amy.tree.update()
-    # MCCFR.simulate_game(game,Bob,[400,400,400,400,400])
-    # Bob.tree.update()
-    # MCCFR.simulate_game(game,Cat,[400,400,400,400,400])
-    # Cat.tree.update()
-    # MCCFR.simulate_game(game,Dog,[400,400,400,400,400])
-    # Dog.tree.update()
-    # MCCFR.simulate_game(game,Jack,[400,400,400,400,400])
-    # Jack.tree.update()
-    # # game.new_game()
-    # # game.deal_card()
-    # # game.deal_public_cards(3,2)
-    # # game.deal_public_cards(1,3)
-    # # game.deal_public_cards(1,4)
-    # # MCCFR.simulate_game(game,Jack,[400,400,400,400,400])
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[4].decisions[5].value)
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[4].decisions[4].value)
-    
-    # # Jack.tree.update()
-    
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[4].value)
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[3].value)
-    
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[4].decisions_p)
-    
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[4].decisions[0].value)
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[4].decisions[1].value)
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[4].decisions[2].value)
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[4].decisions[3].value)
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[4].decisions[4].value)
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[4].decisions[5].value)
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[4].decisions[6].value)
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[3].decisions_p)
-    # # print(Jack.tree)
-
-    
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[3].decisions[1].value)
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[3].decisions[2].value)
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[3].decisions[3].value)
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[3].decisions[4].value)
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[3].decisions[5].value)
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].decisions[3].decisions[6].value)
-    
-    
-    # print("D",Jack.tree.nodes[Jack.hand_num].value)
-    # # print("D",Jack.tree.nodes[Jack.hand_num].value)
-    
-    # # MCCFR.simulate_game(game,Amy,[400,400,400,400,400])
-    # # Amy.tree.update()
-    # # MCCFR.simulate_game(game,Bob,[400,400,400,400,400])
-    # # Bob.tree.update()
-    # # MCCFR.simulate_game(game,Cat,[400,400,400,400,400])
-    # # Cat.tree.update()
-    # # MCCFR.simulate_game(game,Dog,[400,400,400,400,400])
-    # # Dog.tree.update()
-    # # MCCFR.simulate_game(game,Jack,[400,400,400,400,400])
-    # # Jack.tree.update()
-    # # print(Jack.tree.nodes[Jack.hand_num].value)
-    
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions_p)
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[0].value)
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[1].value)
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[2].value)
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[3].value)
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[4].value)
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[5].value)
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[6].value)
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions_p)
-    # # # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[0].value)
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[1].value)
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[2].value)
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[3].value)
-    # # print(Jack.tree.nodes[Jack.hand_num].decisions[6].decisions[4].value)
-    
-    
-    # # print(Jack.tree.nodes[Amy.hand_num].value)
-    # # print(Jack.tree.nodes[Bob.hand_num].value)
-    # # print(Jack.tree.nodes[Cat.hand_num].value)
-    # # print(Jack.tree.nodes[Dog.hand_num].value)
-
-
-
-    
-            
-            
-
-        
-
-        
-        
+    for i in range(1):
+        game.sim_one_game()
 
                     
 
