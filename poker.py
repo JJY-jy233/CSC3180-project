@@ -533,11 +533,15 @@ class Game:
         self.deal_public_cards(3,2)
         self.deal_public_cards(1,3)
         self.deal_public_cards(1,4)
-        for i in self.players:
-            MCCFR.simulate_game(self,i,[1000,1000,1000,1000,1000])
-            i.tree.nodes[i.hand_num].update()
-            print(i.name,"finish")
-        Jack.tree.store_p()
+        # for i in self.players:
+        # i = self.players[0]
+        MCCFR.simulate_game(self,Jack,[1000,1000,1000,1000,1000])
+        print(Jack.tree.nodes[Jack.hand_num].decisions_p)
+        Jack.tree.nodes[Jack.hand_num].update()
+        print(Jack.name,"finish","hand_num:",Jack.hand_num)
+        print(Jack.tree.nodes[Jack.hand_num].decisions_p)
+        Jack.tree.store_p('t1.pkl')
+        print(Jack.tree.nodes[Jack.hand_num].decisions_p)
               
             
 
@@ -548,7 +552,8 @@ class Game:
 if __name__ == "__main__":
     
     root = NodeClass.RootNode()
-    # root.read_p()
+    root.read_p('decision_data.pkl')
+    print('finish loading')
     Jack = Player('1',1,1000,root)
     Bob = Player('2',2,1000,root)
     Amy = Player('3',3,1000,root)
@@ -568,9 +573,38 @@ if __name__ == "__main__":
             if i == m.owner:
                 continue
             i.matrice.append(m)
-    for i in range(1):
-        game.sim_one_game()
+    # for i in range(1):
+    #     game.sim_one_game()
+    #     print(format((i+1)/10,".0%"))
     # root.store_p()
+    
+    # r = NodeClass.RootNode()
+    # r.nodes[0].decisions_p = [1,0,0,0,0,0,0]
+    # r.store_p('t1.pkl')
+    # r.read_p('t1.pkl')
+    # # for i in range(169):
+    # print(r.nodes[0].decisions_p)
+    game.new_game()
+        
+    initial_money=[0] * game.players_num
+    for i in range(game.players_num):
+        initial_money[i] = game.players[i].money
+        
+    game.deal_card()
+    game.deal_public_cards(3,2)
+    game.deal_public_cards(1,3)
+    game.deal_public_cards(1,4)
+    # for i in self.players:
+    # i = self.players[0]
+    MCCFR.simulate_game(game,Jack,[1000,1000,1000,1000,1000])
+    print(Jack.tree.nodes[Jack.hand_num].decisions_p)
+    Jack.tree.nodes[Jack.hand_num].update()
+    print(Jack.name,"finish","hand_num:",Jack.hand_num)
+    print(Jack.tree.nodes[Jack.hand_num].decisions_p)
+    Jack.tree.store_p('t1.pkl')
+    print(Jack.tree.nodes[Jack.hand_num].decisions_p)
+
+    
 
                     
 

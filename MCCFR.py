@@ -69,6 +69,10 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
         c_bet[ii] = game.players[ii].current_bet
         m1[ii] = game.players[ii].matrice.copy()
     
+    i = 0
+    j = 0
+    k = 0
+    l = 0
     for i in range(7):
         
         # node = player.tree.nodes[player.hand_num].decisions
@@ -95,24 +99,24 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
         
         # 第一轮里想让这个玩家做i这个动作   
         if not (game.action_first_round(player,i)): # 如果不成功
-            flag = False
-            for t in range(3): # 尝试三次
-                game.pot = p1
-                # 重置玩家
-                game.rest_players = game.players.copy()
+            # flag = False
+            # for t in range(3): # 尝试三次
+            #     game.pot = p1
+            #     # 重置玩家
+            #     game.rest_players = game.players.copy()
                 
-                # 重置玩家的钱
-                for i2 in range(game.players_num):
-                    game.players[i2].money = players_original_money[i2]
-                    game.players[i2].current_bet = c_bet[i2]
-                    game.players[i2].matrice = m1[i2].copy()
+            #     # 重置玩家的钱
+            #     for i2 in range(game.players_num):
+            #         game.players[i2].money = players_original_money[i2]
+            #         game.players[i2].current_bet = c_bet[i2]
+            #         game.players[i2].matrice = m1[i2].copy()
                     
-                flag = game.action_first_round(player,i) 
-                if flag: # 如果成功了，继续往下
+            #     flag = game.action_first_round(player,i) 
+            #     if flag: # 如果成功了，继续往下
                     
-                    break
-            if not flag:
-                continue
+            #         break
+            # if not flag:
+            continue
         if len(game.rest_players) == 1:
             if len(game.allin) == 0: # player 赢了，这个node的utility等于彩池
                 player.tree.nodes[player.hand_num].decisions[i].value = game.pot - (current_money - player.money)
@@ -153,7 +157,8 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
         
         # round 2
         for j in range(7):
-            
+            print(format(((i*7+j) / (7*7+7)) , '.0%'))
+            # print(i,j,k,l)
             # node = player.tree.nodes[player.hand_num].decisions[i].decisions
             # 重置彩池，等于第一轮结束时的彩池
             game.pot = p2
@@ -173,24 +178,24 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
             
             # 第二轮里想让这个玩家做j这个动作   
             if not (game.action(2,player,j)): # 如果不成功
-                flag = False
-                for t1 in range(3): # 尝试三次
-                    game.pot = p2
-                    # 重置玩家
-                    game.rest_players = player_after_first_round.copy()
+                # flag1 = False
+                # for t1 in range(3): # 尝试三次
+                #     game.pot = p2
+                #     # 重置玩家
+                #     game.rest_players = player_after_first_round.copy()
                     
-                    # 重置玩家的钱
-                    for j2 in range(game.players_num):
-                        game.players[j2].money = player_money_after_first_round[j2]
-                        game.players[j2].current_bet = c_bet1[j2]
-                        game.players[j2].matrice = m2[j2].copy()
+                #     # 重置玩家的钱
+                #     for j2 in range(game.players_num):
+                #         game.players[j2].money = player_money_after_first_round[j2]
+                #         game.players[j2].current_bet = c_bet1[j2]
+                #         game.players[j2].matrice = m2[j2].copy()
                         
-                    flag = game.action(2,player,j) 
-                    if flag: # 如果成功了，继续往下
+                #     flag1 = game.action(2,player,j) 
+                #     if flag1: # 如果成功了，继续往下
                         
-                        break
-                if not flag:
-                    continue
+                #         break
+                # if not flag1:
+                continue
             
             # 如果
             if len(game.rest_players) == 1:
@@ -253,25 +258,25 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
                     continue
                 # 第二轮里想让这个玩家做i这个动作   
                 if not (game.action(3,player,k)): # 如果不成功
-                    flag = False
-                    for t2 in range(3): # 尝试三次
-                        # 重置彩池，等于第一轮结束时的彩池
-                        game.pot = p3
-                        # 重置玩家
-                        game.rest_players = player_after_second_round.copy()
-                        # 重置玩家的钱
-                        for k2 in range(game.players_num):
-                            game.players[k2].money = player_money_after_second_round[k2]
-                            game.players[k2].current_bet = c_bet2[k2] 
-                            game.players[k2].matrice = m3[k2].copy()
+                    # flag2 = False
+                    # for t2 in range(3): # 尝试三次
+                    #     # 重置彩池，等于第一轮结束时的彩池
+                    #     game.pot = p3
+                    #     # 重置玩家
+                    #     game.rest_players = player_after_second_round.copy()
+                    #     # 重置玩家的钱
+                    #     for k2 in range(game.players_num):
+                    #         game.players[k2].money = player_money_after_second_round[k2]
+                    #         game.players[k2].current_bet = c_bet2[k2] 
+                    #         game.players[k2].matrice = m3[k2].copy()
                             
-                        flag = game.action(2,player,k) 
-                        if flag: # 如果成功了，继续往下
+                    #     flag2 = game.action(2,player,k) 
+                    #     if flag2: # 如果成功了，继续往下
                                   
                                 
-                            break
-                    if not flag:
-                        continue
+                    #         break
+                    # if not flag2:
+                    continue
                     
                 # 因为我们不让这个player 弃牌，所以留下来的玩家一定是player
                 if len(game.rest_players) == 1:
@@ -314,6 +319,9 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
                 
                 # round 4
                 for l in range(7):
+                    print(i,j,k,l)
+                    if i == 2 and j==4 and k == 6 and l ==6:
+                        print(i,j,k,l)
                     # print(player.tree.nodes[player.hand_num].decisions[6].decisions[4].decisions[4].decisions[3].value)
                     
                     # if(i == 2 and j == 2 and k == 2):
@@ -334,23 +342,23 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
                         continue
                     # 第二轮里想让这个玩家做i这个动作   
                     if not (game.action(4,player,l)): # 如果不成功
-                        flag = False
-                        for t3 in range(3): # 尝试三次
-                            game.pot = p4
-                            game.rest_players = player_after_third_round.copy()
-                            # 重置玩家的钱
-                            for l1 in range(game.players_num):
-                                game.players[l1].money = player_money_after_third_round[l1]
-                                game.players[l1].current_bet = c_bet3[l1]
-                                game.players[l1].matrice = m4[l1].copy()
+                        # flag3 = False
+                        # for t3 in range(3): # 尝试三次
+                        #     game.pot = p4
+                        #     game.rest_players = player_after_third_round.copy()
+                        #     # 重置玩家的钱
+                        #     for l1 in range(game.players_num):
+                        #         game.players[l1].money = player_money_after_third_round[l1]
+                        #         game.players[l1].current_bet = c_bet3[l1]
+                        #         game.players[l1].matrice = m4[l1].copy()
                                 
-                            flag = game.action(4,player,l) 
-                            if flag: # 如果成功了，继续往下
+                        #     flag3 = game.action(4,player,l) 
+                        #     if flag3: # 如果成功了，继续往下
                                 
                                     
-                                break
-                        if not flag:
-                            continue
+                        #         break
+                        # if not flag3:
+                        continue
                         
                     # 正常到这第四轮结束就应该比大小了
                     if len(game.rest_players) == 1:

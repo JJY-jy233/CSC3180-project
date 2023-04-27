@@ -690,11 +690,17 @@ class Player:
 
             self.p_l = self.tree.nodes[self.hand_num].decisions_p
         elif round == 2:
+            if self.first_choice == 0:
+                return -2
             self.p_l = self.tree.nodes[self.hand_num].decisions[self.first_choice].decisions_p
         elif round == 3:
+            if self.second_choice == 0:
+                return -2
             self.p_l = self.tree.nodes[self.hand_num].decisions[self.first_choice].decisions[self.second_choice].decisions_p
 
         elif round == 4:
+            if self.third_choice == 0:
+                return -2
             self.p_l = self.tree.nodes[self.hand_num].decisions[self.first_choice].decisions[
                 self.second_choice].decisions[self.third_choice].decisions_p
 
@@ -772,6 +778,12 @@ class Player:
             else:
                 sum = self.p_l[0] + self.p_l[2] + \
                     self.p_l[4] + self.p_l[5] + self.p_l[6]
+                
+                p1 = 0.2
+                p2 = 0.2
+                p3 = 0.2
+                p4 = 0.2
+                p5 = 0.2
                 if win_pos < 0.4:
                     p1 = self.p_l[0] / sum / 2 + (1-win_pos)/2
                     p2 = self.p_l[2] / sum / 2 + win_pos/8
