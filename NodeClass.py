@@ -208,10 +208,10 @@ class RootNode:
             self.nodes[i].change_p()
             self.nodes[i].compute_value()
 
-    def store_p(self):
-        with open("decision_data.pkl", "wb") as f:
+    def store_p(self, filename:str):
+        with open(filename, "wb") as f:
             for i in range(169):
-                pickle.dump(self.nodes[0].decisions_p, f)
+                pickle.dump(self.nodes[i].decisions_p, f)
             for i in range(169):
                 for t in range(1, len(self.nodes[i].decisions)):
                     pickle.dump(self.nodes[i].decisions[t].decisions_p, f)
@@ -229,10 +229,10 @@ class RootNode:
                             
             f.close()
 
-    def read_p(self):
-        with open("decision_data.pkl", "rb") as f:
+    def read_p(self,filename:str):
+        with open(filename, "rb") as f:
             for i in range(169):
-                self.nodes[0].decisions_p = pickle.load(f)
+                self.nodes[i].decisions_p = pickle.load(f)
             for i in range(169):
                 for t in range(1, len(self.nodes[i].decisions)):
                     self.nodes[i].decisions[t].decisions_p = pickle.load(f)
@@ -248,24 +248,3 @@ class RootNode:
                             self.nodes[i].decisions[t].decisions[j].decisions[n].decisions_p = pickle.load(
                                 f)
             f.close()
-
-# root = RootNode()
-# print(root.nodes[0].decisions_p)
-# root.nodes[0].decisions_p = [1,0,0,0,0,0,1111]
-# print(root.nodes[0].decisions_p)
-# root.store_p()
-# # with open("decision_data.pkl", "wb") as f:
-# #     # for i in range(169):
-# #     pickle.dump(root.nodes[0].decisions_p, f)
-# #     f.close()
-
-# root.nodes[0].decisions_p = [1,100,0,0,0,0,1]
-# # newroot = RootNode()
-
-# # with open("decision_data.pkl", "rb") as f:
-# #     root.nodes[0].decisions_p = pickle.load(f)
-# #     f.close()
-
-# root.read_p()
-
-# print(root.nodes[0].decisions_p)
