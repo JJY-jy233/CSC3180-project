@@ -213,17 +213,17 @@ class RootNode:
             for i in range(169):
                 pickle.dump(self.nodes[i].decisions_p, f)
             for i in range(169):
-                for t in range(len(self.nodes[i].decisions)):
+                for t in range(1, len(self.nodes[i].decisions)):
                     pickle.dump(self.nodes[i].decisions[t].decisions_p, f)
             for i in range(169):
-                for t in range(len(self.nodes[i].decisions)):
-                    for j in range(len(self.nodes[i].decisions[t].decisions)):
+                for t in range(1, len(self.nodes[i].decisions)):
+                    for j in range(1,len(self.nodes[i].decisions[t].decisions)):
                         pickle.dump(
                             self.nodes[i].decisions[t].decisions[j].decisions_p, f)
             for i in range(169):
-                for t in range(len(self.nodes[i].decisions)):
-                    for j in range(len(self.nodes[i].decisions[t].decisions)):
-                        for n in range(len(self.nodes[i].decisions[t].decisions[j].decisions)):
+                for t in range(1, len(self.nodes[i].decisions)):
+                    for j in range(1, len(self.nodes[i].decisions[t].decisions)):
+                        for n in range(1, len(self.nodes[i].decisions[t].decisions[j].decisions)):
                             pickle.dump(
                                 self.nodes[i].decisions[t].decisions[j].decisions[n].decisions_p, f)
 
@@ -232,16 +232,16 @@ class RootNode:
             for i in range(169):
                 self.nodes[i].decision_p = pickle.load(f)
             for i in range(169):
-                for t in range(len(self.nodes[i].decisions)):
+                for t in range(1, len(self.nodes[i].decisions)):
                     self.nodes[i].decisions[t].decisions_p = pickle.load(f)
             for i in range(169):
-                for t in range(len(self.nodes[i].decisions)):
-                    for j in range(len(self.nodes[i].decisions[t].decisions)):
+                for t in range(1, len(self.nodes[i].decisions)):
+                    for j in range(1, len(self.nodes[i].decisions[t].decisions)):
                         self.nodes[i].decisions[t].decisions[j].decisions_p = pickle.load(
                             f)
             for i in range(169):
-                for t in range(len(self.nodes[i].decisions)):
-                    for j in range(len(self.nodes[i].decisions[t].decisions)):
-                        for n in range(len(self.nodes[i].decisions[t].decisions[j].decisions)):
+                for t in range(1, len(self.nodes[i].decisions)):
+                    for j in range(1, len(self.nodes[i].decisions[t].decisions)):
+                        for n in range(1, len(self.nodes[i].decisions[t].decisions[j].decisions)):
                             self.nodes[i].decisions[t].decisions[j].decisions[n].decisions_p = pickle.load(
                                 f)
