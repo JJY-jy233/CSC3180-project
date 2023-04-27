@@ -571,7 +571,7 @@ class Player:
         self.states: list[State] = [None, None, None, None]
         self.matrice: list[Matrix] = []
         self.last_wager = 0
-        self.character = 1
+        self.character = 0
         self.bet_number = 0
         # self.second_state:State = None
 
@@ -896,6 +896,13 @@ class Player:
                 self.current_bet += allin
                 # self.money = 0
                 money = -3    
+            if 1<= self.bet_number <=3:
+                action_label =4
+            if 3< self.bet_number <=5:
+                action_label =5
+            if  self.bet_number > 5:
+                action_label =6
+            
         if money > 0:
             self.last_wager = self.current_bet
         return money
