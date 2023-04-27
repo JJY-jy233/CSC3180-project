@@ -246,13 +246,18 @@ class Game:
                     for matrix in pp.matrice:
                         if matrix.owner == p:
                             if player_bet > 0:
-                                matrix.second_bet_update(player_bet,p.money + player_bet,p.init_money,self.states[round-2].public_cards)
+                                # print('update',pp.name,'\'s',p.name,'matrix')
+                                # print(player_bet,p.money+player_bet)
+                                
+                                matrix.second_bet_update(player_bet,p.money + player_bet,p.init_money,self.states[round-1].public_cards)
             # # 当前一轮最大下注筹码
             # current_bet = max(player_bet,current_bet)
             # 当前一轮最大下注筹码
             if player_bet > max_bet:
                 max_bet = player_bet
                 # 都allinle
+                self.states[round - 1].rest_players = self.rest_players.copy()
+                
                 if len(self.rest_players) == 0:
                     break
                 last_p = self.rest_players[(i+len(self.rest_players)-1)%len(self.rest_players)]
@@ -269,14 +274,19 @@ class Game:
                 self.allin.append(p)
                 self.pot += p.money
                 player_bet = p.current_bet
-                for pp in self.rest_players:
-                    if pp != p:
-                        for matrix in pp.matrice:
-                            if matrix.owner == p:
+                for pp1 in self.rest_players:
+                    if pp1 != p:
+                        for matrix1 in pp1.matrice:
+                            if matrix1.owner == p:
                                 # if player_bet > 0:
-                                matrix.second_bet_update(p.money,p.money,p.init_money,self.states[round-2].public_cards)
+                                # print('update',pp1.name,'\'s',p.name,'matrix')
+                                # print(player_bet,p.money+player_bet)
+                                
+                                matrix1.second_bet_update(p.money,p.money,p.init_money,self.states[round-1].public_cards)
                 p.money = 0
                 i-=1
+            
+            self.states[round - 1].rest_players = self.rest_players.copy()
             
             if(len(self.rest_players) == 1 and len(self.allin) == 0):
                 break
@@ -360,12 +370,14 @@ class Game:
                     for matrix in pp.matrice:
                         if matrix.owner == p:
                             if player_bet > 0:
+                                # print('update',pp.name,'\'s',p.name,'matrix')
+                                # print(player_bet,p.money+player_bet)
                                 matrix.first_bet_update(player_bet,p.money + player_bet,p.init_money)
              # 当前一轮最大下注筹码
             if p.current_bet > max_bet:
                 max_bet = p.current_bet
                 self.states[0].max_bet = p.current_bet
-                
+                self.states[0].rest_players = self.rest_players.copy()
                 if len(self.rest_players) == 0:
                     break
                 last_p = self.rest_players[(i+len(self.rest_players)-1)%len(self.rest_players)]
@@ -377,12 +389,14 @@ class Game:
                 self.allin.append(p)
                 self.pot += p.money
                 player_bet = p.current_bet
-                for pp in self.rest_players:
-                    if pp != p:
-                        for matrix in pp.matrice:
-                            if matrix.owner == p:
+                for pp1 in self.rest_players:
+                    if pp1 != p:
+                        for matrix1 in pp1.matrice:
+                            if matrix1.owner == p:
                                 # if player_bet > 0:
-                                matrix.first_bet_update(p.money,p.money,p.init_money)
+                                # print('update',pp1.name,'\'s,',p.name,'matrix')
+                                # print(player_bet,p.money+player_bet)
+                                matrix1.first_bet_update(p.money,p.money,p.init_money)
                 p.money = 0
                 i-=1
             # 弃牌，
@@ -390,7 +404,8 @@ class Game:
                 self.rest_players.remove(p)
                 # print(p.name,"fold")
                 i-=1
-                
+            
+            self.states[0].rest_players = self.rest_players.copy()
             if(len(self.rest_players) == 1 and len(self.allin) == 0):
                 break
                 
@@ -531,6 +546,21 @@ if __name__ == "__main__":
                 continue
             i.matrice.append(m)
     
+    game.deal_card()
+    game.action_first_round()
+    print(game.states[0].rest_players)
+    game.deal_public_cards(3,2)
+    game.action(2)
+    print(game.states[1].rest_players)
+    game.deal_public_cards(1,3)
+    game.action(3)
+    print(game.states[2].rest_players)
+    game.deal_public_cards(1,4)
+    
+    game.action(4)
+    print(game.states[3].rest_players)
+    for i in game.rest_players:
+        print(i.money)
     # for p in game.players:
     #     for mm in p.matrice:
     #         print(p.name,mm.owner.name)

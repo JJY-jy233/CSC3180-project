@@ -3,7 +3,7 @@ class State:
         self.legal_actions = []
         self.player_actions = []
         self.public_cards = []
-        
+        self.rest_players = []
         self.max_bet = 0
         self.round_pot = 0
         pass
@@ -12,6 +12,7 @@ class State:
         self.legal_actions = []
         self.player_actions = []
         self.public_cards = []
+        self.rest_players = []
         
         self.max_bet = 0
         self.round_pot = 0

@@ -401,7 +401,7 @@ class Matrix:
         possibility_threshold = 8 + 4 *self.valueable_func(wager, current_deposit,initial_deposit)/initial_deposit
         for row in range(13):
             for col in range(13):
-                cache = (possibility_threshold - 9) * math.log(
+                cache = (possibility_threshold - 9) * (
                     self.winning_posibility_matrix[12-row][12-col]-possibility_threshold)
                 if cache >= 0:
                     self.precentage_sum += (cache-1)
