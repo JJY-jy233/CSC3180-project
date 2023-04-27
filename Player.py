@@ -722,7 +722,7 @@ class Player:
         #     p = np.array([p1, p2])
         #     action_label = np.random.choice([1, 3], p=p.ravel()
         
-        
+        win_pos = 0.5
         if round == 1:
             sum_pos = 0
             player_number = 0

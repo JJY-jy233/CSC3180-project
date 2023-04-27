@@ -258,8 +258,8 @@ class Game:
                 # 都allinle
                 self.states[round - 1].rest_players = self.rest_players.copy()
                 
-                if len(self.rest_players) == 0:
-                    break
+                # if len(self.rest_players) == 0:
+                #     break
                 last_p = self.rest_players[(i+len(self.rest_players)-1)%len(self.rest_players)]
             
             # 弃牌，
@@ -535,9 +535,9 @@ class Game:
         self.deal_public_cards(1,4)
         for i in self.players:
             MCCFR.simulate_game(self,i,[1000,1000,1000,1000,1000])
-            i.tree.update()
-            # print(i.money)
-        
+            i.tree.nodes[i.hand_num].update()
+            print(i.name,"finish")
+        Jack.tree.store_p()
               
             
 
@@ -548,6 +548,7 @@ class Game:
 if __name__ == "__main__":
     
     root = NodeClass.RootNode()
+    # root.read_p()
     Jack = Player('1',1,1000,root)
     Bob = Player('2',2,1000,root)
     Amy = Player('3',3,1000,root)
@@ -569,6 +570,7 @@ if __name__ == "__main__":
             i.matrice.append(m)
     for i in range(1):
         game.sim_one_game()
+    # root.store_p()
 
                     
 
