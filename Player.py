@@ -17,43 +17,34 @@ class Matrix:
         self.upper_precentage_sum = 12+12*11/2
         self.lower_precentage_sum = 13+13*12/2
 
-        self.curve_index = 60
+        self.curve_index = 300
         self.nd_power = 5
-        self.one_pair_position_index = 0.25
-        self.two_pair_position_index = 1.0
-        self.three_of_kind_position_index = 1.5
-        self.straight_position_index = 2.0
-        self.full_house_position_index = 2.5
-        self.four_of_the_kind_position_index = 2.75
+        self.one_pair_position_index = 0.3
+        self.two_pair_position_index = 0.7
+        self.three_of_kind_position_index = 1.0
+        self.straight_position_index = 1.25
+        self.full_house_position_index = 1.5
+        self.four_of_the_kind_position_index = 1.75
 
         self.winning_posibility_matrix = [[30.8, 19.8, 18.2, 17.0, 16.1, 14.1, 13.4, 12.9, 12.5, 12.9, 12.8, 12.6, 12.4],
-                                          [16.2, 25.8, 17.6, 16.5, 15.7, 13.7, 12.4,
-                                              11.9, 11.5, 11.2, 11.1, 11.0, 10.9],
-                                          [14.5, 14.1, 21.9, 16.1, 15.3, 13.4, 12.0,
-                                              10.9, 10.5, 10.2, 10.1, 10.1, 10.0],
-                                          [13.1, 12.8, 12.5, 18.9, 15.3, 13.4, 12.1,
-                                              10.9, 9.84, 6.58, 9.47, 9.41, 9.32],
-                                          [12.0, 11.8, 11.6, 11.8, 16.6, 13.6, 12.3,
-                                              11.1, 9.98, 9.01, 8.90, 8.83, 8.77],
-                                          [9.93, 9.69, 9.55, 9.71, 10.1, 15.2, 12.3,
-                                              11.4, 10.3, 9.32, 8.44, 8.36, 8.28],
-                                          [9.16, 8.22, 8.07, 8.26, 8.67, 8.74, 14.1,
-                                              11.7, 10.8, 9.85, 8.90, 8.06, 7.94],
-                                          [8.56, 7.65, 6.79, 6.91, 7.32, 7.76, 8.14,
-                                              13.2, 11.2, 10.4, 9.52, 5.58, 7.74],
-                                          [8.11, 7.25, 6.38, 5.76, 6.11, 6.59, 7.22,
-                                              7.70, 12.6, 10.9, 10.1, 9.27, 8.32],
-                                          [8.60, 6.91, 6.10, 5.49, 5.05, 5.47, 6.15,
-                                              6.85, 7.37, 12.0, 10.6, 9.97, 9.06],
-                                          [8.43, 9.78, 5.98, 5.35, 4.88, 4.55, 5.09,
-                                              5.86, 6.62, 7.20, 11.8, 9.61, 8.92],
-                                          [8.27, 6.69, 5.87, 5.29, 4.82, 4.42, 4.42,
-                                              4.84, 5.65, 6.42, 6.05, 11.8, 8.59],
+                                          [16.2, 25.8, 17.6, 16.5, 15.7, 13.7, 12.4, 11.9, 11.5, 11.2, 11.1, 11.0, 10.9],
+                                          [14.5, 14.1, 21.9, 16.1, 15.3, 13.4, 12.0, 10.9, 10.5, 10.2, 10.1, 10.1, 10.0],
+                                          [13.1, 12.8, 12.5, 18.9, 15.3, 13.4, 12.1, 10.9, 9.84, 6.58, 9.47, 9.41, 9.32],
+                                          [12.0, 11.8, 11.6, 11.8, 16.6, 13.6, 12.3, 11.1, 9.98, 9.01, 8.90, 8.83, 8.77],
+                                          [9.93, 9.69, 9.55, 9.71, 10.1, 15.2, 12.3, 11.4, 10.3, 9.32, 8.44, 8.36, 8.28],
+                                          [9.16, 8.22, 8.07, 8.26, 8.67, 8.74, 14.1, 11.7, 10.8, 9.85, 8.90, 8.06, 7.94],
+                                          [8.56, 7.65, 6.79, 6.91, 7.32, 7.76, 8.14, 13.2, 11.2, 10.4, 9.52, 5.58, 7.74],
+                                          [8.11, 7.25, 6.38, 5.76, 6.11, 6.59, 7.22, 7.70, 12.6, 10.9, 10.1, 9.27, 8.32],
+                                          [8.60, 6.91, 6.10, 5.49, 5.05, 5.47, 6.15, 6.85, 7.37, 12.0, 10.6, 9.97, 9.06],
+                                          [8.43, 9.78, 5.98, 5.35, 4.88, 4.55, 5.09, 5.86, 6.62, 7.20, 11.8, 9.61, 8.92],
+                                          [8.27, 6.69, 5.87, 5.29, 4.82, 4.42, 4.42, 4.84, 5.65, 6.42, 6.05, 11.8, 8.59],
                                           [7.96, 6.60, 5.81, 5.23, 4.76, 4.37, 4.11, 3.98, 4.63, 5.47, 5.31, 4.97, 11.8]]
 
         pass
 
     def valueable_func(self, wager, current_deposit, initial_deposit):  # 衡量这笔下注对玩家有多重要
+        if current_deposit == 0:
+            return wager*0.5
         return wager*(initial_deposit/current_deposit + 1)*0.5
 
     def return_possibility(self, row, col):
@@ -69,7 +60,7 @@ class Matrix:
 
     # 将正态分布函数在0-2中移动以显示哪个值上的可能性较高
     def normal_distribution_process(self, wager, position_index):
-        return 1+self.nd_power**((1+self.curve_process(wager))*math.exp(-0.5*(position_index-2*(self.curve_process(wager)-0.5))**2))
+        return 1+self.nd_power*(1+self.curve_process(wager))*math.exp(-2*(position_index-self.curve_process(wager))**2)
 
     def get_appear_time(self, public_card):  # 返回每个数字出现的个数
         appear_time_list = [0]*13
@@ -84,7 +75,7 @@ class Matrix:
             for r in range(13):
                 for c in range(13):
                     if c == card[1]:
-                        cache1 = matrix[r][card[1]] * self.normal_distribution_process(
+                        cache1 = matrix[r][card[1]] + self.normal_distribution_process(
                             wager, one_pair_position_index)
                         cache2 = matrix[r][card[1]]
                         if card[1] > r:
@@ -94,7 +85,7 @@ class Matrix:
                         self.precentage_sum += (cache1-cache2)
                         matrix[r][card[1]] = cache1
                     elif r == card[1]:
-                        cache1 = matrix[card[1]][c] * self.normal_distribution_process(
+                        cache1 = matrix[card[1]][c] + self.normal_distribution_process(
                             wager, one_pair_position_index)
                         cache2 = matrix[card[1]][c]
                         if c > card[1]:
@@ -112,7 +103,7 @@ class Matrix:
         while i < 13:
             if time_list[i] == 2:
                 for rc in range(13):
-                    cache1 = matrix[rc][rc] * self.normal_distribution_process(
+                    cache1 = matrix[rc][rc] + self.normal_distribution_process(
                         wager, two_pair_position_index)
                     cache2 = matrix[rc][rc]
                     self.lower_precentage_sum += (cache1-cache2)
@@ -123,31 +114,34 @@ class Matrix:
                 j = i+1
                 while j < 13:
                     if time_list[j] == 1:
-                        cache1 = matrix[i][j] * self.normal_distribution_process(
+                        cache1 = matrix[i][j] + self.normal_distribution_process(
                             wager, two_pair_position_index)
                         cache2 = matrix[i][j]
                         self.upper_precentage_sum += (cache1-cache2)
                         self.precentage_sum += (cache1-cache2)
                         matrix[i][j] = cache1
 
-                        cache1 = matrix[j][i] * self.normal_distribution_process(
+                        cache1 = matrix[j][i] + self.normal_distribution_process(
                             wager, two_pair_position_index)
                         cache2 = matrix[j][i]
                         self.upper_precentage_sum += (cache1-cache2)
                         self.precentage_sum += (cache1-cache2)
                         matrix[j][i] = cache1
+                    j += 1
             i += 1
 
     def three_of_kind_complement(self, wager, public_card: list):
         matrix = self.matrix
         three_of_kind_position_index = self.three_of_kind_position_index
         time_list = self.get_appear_time(public_card)
+        if_exist = False
         i = 0
         while i < 13:
             if time_list[i] == 2:
+                if_exist = True
                 for rc in range(13):
                     if rc != i:
-                        cache1r = matrix[rc][i] * self.normal_distribution_process(
+                        cache1r = matrix[rc][i] + self.normal_distribution_process(
                             wager, three_of_kind_position_index)
                         cache2r = matrix[rc][i]
                         if i > rc:
@@ -157,7 +151,7 @@ class Matrix:
                         self.precentage_sum += (cache1r-cache2r)
                         matrix[rc][i] = cache1r
 
-                        cache1c = matrix[i][rc] * self.normal_distribution_process(
+                        cache1c = matrix[i][rc] + self.normal_distribution_process(
                             wager, three_of_kind_position_index)
                         cache2c = matrix[i][rc]
 
@@ -168,7 +162,7 @@ class Matrix:
                         self.precentage_sum += (cache1c-cache2c)
                         matrix[i][rc] = cache1c
                     else:
-                        cache1 = matrix[i][i] * self.normal_distribution_process(
+                        cache1 = matrix[i][i] + self.normal_distribution_process(
                             wager, three_of_kind_position_index)
                         cache2 = matrix[i][i]
                         self.lower_precentage_sum += (cache1-cache2)
@@ -176,13 +170,21 @@ class Matrix:
                         matrix[i][i] = cache1
 
             elif time_list[i] == 1:
-                cache1 = matrix[i][i] * self.normal_distribution_process(
+                if_exist = True
+                cache1 = matrix[i][i] + self.normal_distribution_process(
                     wager, three_of_kind_position_index)
                 cache2 = matrix[i][i]
                 self.lower_precentage_sum += (cache1-cache2)
                 self.precentage_sum += (cache1-cache2)
                 matrix[i][i] = cache1
+
+            if time_list[i] == 3:
+                if_exist = True
+
             i += 1
+        return if_exist
+                
+    
 
     def straight_complement(self, wager, public_card: list):
         matrix = self.matrix
@@ -190,7 +192,8 @@ class Matrix:
         time_list = self.get_appear_time(public_card)
         time_list = [time_list[12]] + time_list
         i = 0
-        while i < 10:
+        if_exist = False
+        while i < 10: #计算每一个5格的区间里出现多少次值
             interval_time_list = time_list[i:i+5]
             count = 0
 
@@ -207,8 +210,8 @@ class Matrix:
                 x += 1
 
             if count == 3:
-                cache1r = matrix[required_card[0]][required_card[1]] * \
-                    self.normal_distribution_process(
+                if_exist = True
+                cache1r = matrix[required_card[0]][required_card[1]] + self.normal_distribution_process(
                         wager, straight_position_index)
                 cache2r = matrix[required_card[0]][required_card[1]]
                 if required_card[1] > required_card[0]:
@@ -218,8 +221,7 @@ class Matrix:
                 self.precentage_sum += (cache1r-cache2r)
                 matrix[required_card[0]][required_card[1]] = cache1r
 
-                cache1c = matrix[required_card[1]][required_card[0]] * \
-                    self.normal_distribution_process(
+                cache1c = matrix[required_card[1]][required_card[0]] + self.normal_distribution_process(
                         wager, straight_position_index)
                 cache2c = matrix[required_card[1]][required_card[0]]
                 if required_card[0] > required_card[1]:
@@ -230,10 +232,10 @@ class Matrix:
                 matrix[required_card[1]][required_card[0]] = cache1c
 
             elif count == 4:
+                if_exist = True
                 for rc in range(13):
                     if rc != required_card[0]:
-                        cache1r = matrix[rc][required_card[0]] * \
-                            self.normal_distribution_process(
+                        cache1r = matrix[rc][required_card[0]] + self.normal_distribution_process(
                                 wager, straight_position_index)
                         cache2r = matrix[rc][required_card[0]]
                         if required_card[0] > rc:
@@ -243,8 +245,7 @@ class Matrix:
                         self.precentage_sum += (cache1r-cache2r)
                         matrix[rc][required_card[0]] = cache1r
 
-                        cache1c = matrix[required_card[0]][rc] * \
-                            self.normal_distribution_process(
+                        cache1c = matrix[required_card[0]][rc] + self.normal_distribution_process(
                                 wager, straight_position_index)
                         cache2c = matrix[required_card[0]][rc]
                         if rc > required_card[0]:
@@ -254,25 +255,31 @@ class Matrix:
                         self.precentage_sum += (cache1c-cache2c)
                         matrix[required_card[0]][rc] = cache1c
                     else:
-                        cache1 = matrix[required_card[0]][required_card[0]] * \
-                            self.normal_distribution_process(
+                        cache1 = matrix[required_card[0]][required_card[0]] + self.normal_distribution_process(
                                 wager, straight_position_index)
                         cache2 = matrix[required_card[0]][required_card[0]]
                         self.lower_precentage_sum += (cache1-cache2)
                         self.precentage_sum += (cache1-cache2)
                         matrix[required_card[0]][required_card[0]] = cache1
+            if count == 5:
+                if_exist = True
             i += 1
+        return if_exist
 
     def full_house_complement(self, wager, public_card: list):
         matrix = self.matrix
         full_house_position_index = self.full_house_position_index
         time_list = self.get_appear_time(public_card)
+        if_exist = False
         for j in range(13):
             if time_list[j] == 3:
+                if_exist = True
                 for i in range(13):
+                    if time_list[i] == 2:
+                        if_exist = True
                     if time_list[i] == 1:
                         for rc in range(13):
-                            cache1r = matrix[rc][i] * self.normal_distribution_process(
+                            cache1r = matrix[rc][i] + self.normal_distribution_process(
                                 wager, full_house_position_index)
                             cache2r = matrix[rc][i]
                             if i > rc:
@@ -282,7 +289,7 @@ class Matrix:
                             self.precentage_sum += (cache1r-cache2r)
                             matrix[rc][i] = cache1r
 
-                            cache1c = matrix[i][rc] * self.normal_distribution_process(
+                            cache1c = matrix[i][rc] + self.normal_distribution_process(
                                 wager, full_house_position_index)
                             cache2c = matrix[i][rc]
                             if rc > i:
@@ -292,7 +299,7 @@ class Matrix:
                             self.precentage_sum += (cache1c-cache2c)
                             matrix[i][rc] = cache1c
 
-                    cache1 = matrix[i][i] * self.normal_distribution_process(
+                    cache1 = matrix[i][i] + self.normal_distribution_process(
                         wager, full_house_position_index)
                     cache2 = matrix[i][i]
                     self.lower_precentage_sum += (cache1-cache2)
@@ -300,9 +307,10 @@ class Matrix:
                     matrix[i][i] = cache1
             elif time_list[j] == 2:
                 for k in range(j+1, 13):
+                    if_exist = True
                     if time_list[k] == 2:
                         for rc in range(13):
-                            cache1r = matrix[rc][k] * self.normal_distribution_process(
+                            cache1r = matrix[rc][k] + self.normal_distribution_process(
                                 wager, full_house_position_index)
                             cache2r = matrix[rc][k]
                             if k > rc:
@@ -312,7 +320,7 @@ class Matrix:
                             self.precentage_sum += (cache1r-cache2r)
                             matrix[rc][k] = cache1r
 
-                            cache1c = matrix[k][rc] * self.normal_distribution_process(
+                            cache1c = matrix[k][rc] + self.normal_distribution_process(
                                 wager, full_house_position_index)
                             cache2c = matrix[k][rc]
                             if rc > k:
@@ -322,7 +330,7 @@ class Matrix:
                             self.precentage_sum += (cache1c-cache2c)
                             matrix[k][rc] = cache1c
 
-                            cache1r = matrix[rc][j] * self.normal_distribution_process(
+                            cache1r = matrix[rc][j] + self.normal_distribution_process(
                                 wager, full_house_position_index)
                             cache2r = matrix[rc][j]
                             if j > rc:
@@ -332,7 +340,7 @@ class Matrix:
                             self.precentage_sum += (cache1r-cache2r)
                             matrix[rc][j] = cache1r
 
-                            cache1c = matrix[j][rc] * self.normal_distribution_process(
+                            cache1c = matrix[j][rc] + self.normal_distribution_process(
                                 wager, full_house_position_index)
                             cache2c = matrix[j][rc]
                             if rc > j:
@@ -343,24 +351,30 @@ class Matrix:
                             matrix[j][rc] = cache1c
 
                     elif time_list[k] == 1:
+                        if_exist = True
                         for i in range(13):
                             if time_list[i] == 1:
-                                cache1 = matrix[i][i] * self.normal_distribution_process(
+                                cache1 = matrix[i][i] + self.normal_distribution_process(
                                     wager, full_house_position_index)
                                 cache2 = matrix[i][i]
                                 self.lower_precentage_sum += (cache1-cache2)
                                 self.precentage_sum += (cache1-cache2)
                                 matrix[i][i] = cache1
+        return if_exist
 
     def four_of_the_kind_complement(self, wager, public_card: list):
         matrix = self.matrix
         four_of_the_kind_position_index = self.four_of_the_kind_position_index
+        if_exist = False
         time_list = self.get_appear_time(public_card)
         for i in range(13):
+            if time_list [i] == 4:
+                if_exist = True
             if time_list[i] == 3:
+                if_exist = True
                 for rc in range(13):
                     if rc != i:
-                        cache1r = matrix[rc][i] * self.normal_distribution_process(
+                        cache1r = matrix[rc][i] + self.normal_distribution_process(
                             wager, four_of_the_kind_position_index)
                         cache2r = matrix[rc][i]
                         if i > rc:
@@ -370,7 +384,7 @@ class Matrix:
                         self.precentage_sum += (cache1r-cache2r)
                         matrix[rc][i] = cache1r
 
-                        cache1c = matrix[i][rc] * self.normal_distribution_process(
+                        cache1c = matrix[i][rc] + self.normal_distribution_process(
                             wager, four_of_the_kind_position_index)
                         cache2c = matrix[i][rc]
                         if rc > i:
@@ -380,7 +394,7 @@ class Matrix:
                         self.precentage_sum += (cache1c-cache2c)
                         matrix[i][rc] = cache1c
                     else:
-                        cache1 = matrix[i][i] * self.normal_distribution_process(
+                        cache1 = matrix[i][i] + self.normal_distribution_process(
                             wager, four_of_the_kind_position_index)
                         cache2 = matrix[i][i]
                         self.lower_precentage_sum += (cache1-cache2)
@@ -388,26 +402,30 @@ class Matrix:
                         matrix[i][i] = cache1
 
             elif time_list[i] == 2:
-                cache1 = matrix[i][i] * self.normal_distribution_process(
+                if_exist = True
+                cache1 = matrix[i][i] + self.normal_distribution_process(
                     wager, four_of_the_kind_position_index)
                 cache2 = matrix[i][i]
                 self.lower_precentage_sum += (cache1-cache2)
                 self.precentage_sum += (cache1-cache2)
                 matrix[i][i] = cache1
+        return if_exist
 
     def first_bet_update(self, wager, current_deposit, initial_deposit):  # 没有公牌时用的update
         matrix = self.matrix
-        possibility_threshold = 8 + 4 *self.valueable_func(wager, current_deposit,initial_deposit)/initial_deposit
+        possibility_threshold = 30-1000/(self.valueable_func(wager, current_deposit,initial_deposit)+45)
+        if possibility_threshold > 30.8:
+            possibility_threshold = 30.8
         for row in range(13):
             for col in range(13):
-                cache = (possibility_threshold - 9) * (
-                    self.winning_posibility_matrix[12-row][12-col]-possibility_threshold)
-                if cache >= 0:
-                    self.precentage_sum += (cache-1)
-                    matrix[12-row][12-col] = cache
+                cache = 1 + (3*possibility_threshold)*math.exp(-0.1*(self.winning_posibility_matrix[row][col]-possibility_threshold)**2/(0.3*possibility_threshold)) #修改为用normal distribution调整
+                
+                self.precentage_sum += (cache-1)
+                if col > row:
+                    self.upper_precentage_sum += (cache-1)
                 else:
-                    self.precentage_sum -= (1+1/cache)
-                    matrix[12-row][12-col] = -1/cache
+                    self.lower_precentage_sum += (cache-1)
+                matrix[row][col] = cache
 
     def second_bet_update(self, wager, current_deposit, initial_deposit, raw_public_card):  # 有公牌时用的update
         value = self.valueable_func(wager, current_deposit, initial_deposit)
@@ -415,11 +433,34 @@ class Matrix:
         for raw_card in raw_public_card:
             public_card.append([get_card_suit_id(raw_card), 12-get_card_num_id(raw_card)])
 
-        self.one_pair_complement(value, public_card)
+        if not self.four_of_the_kind_complement(value, public_card):
+            muti = self.four_of_the_kind_position_index /self.full_house_position_index
+
+            self.one_pair_position_index = self.one_pair_position_index * muti
+            self.two_pair_position_index = self.two_pair_position_index * muti
+            self.three_of_kind_position_index = self.three_of_kind_position_index * muti
+            self.straight_position_index = self.straight_position_index * muti
+            self.full_house_position_index = self.full_house_position_index * muti
+            
+        if not self.full_house_complement(value, public_card):
+            muti = self.full_house_position_index /self.straight_position_index
+
+            self.one_pair_position_index = self.one_pair_position_index * muti
+            self.two_pair_position_index = self.two_pair_position_index * muti
+            self.three_of_kind_position_index = self.three_of_kind_position_index * muti
+            self.straight_position_index = self.straight_position_index * muti
+
+        if not self.straight_complement(value, public_card):
+            muti = self.straight_position_index /self.three_of_kind_position_index
+
+            self.one_pair_position_index = self.one_pair_position_index * muti
+            self.two_pair_position_index = self.two_pair_position_index * muti
+            self.three_of_kind_position_index = self.three_of_kind_position_index * muti
+
         self.three_of_kind_complement(value, public_card)
-        self.straight_complement(value, public_card)
-        self.full_house_complement(value, public_card)
-        self.four_of_the_kind_complement(value, public_card)
+        self.two_pair_complement(value, public_card)
+        self.one_pair_complement(value, public_card)
+        
 
     def m_show_hand(self, public_cards, self_player, compare_player):
         rest_players = [self_player, compare_player]
@@ -487,20 +528,18 @@ class Matrix:
         sum_count = 0
 
         if len(public_cards) == 0:
-            # print(self_player.hand)
-            i = max(get_card_num_id(self_player.hand[0]),get_card_num_id(self_player.hand[1]))
-            j = min(get_card_num_id(self_player.hand[0]),get_card_num_id(self_player.hand[1]))
+            i = max(12-get_card_num_id(self_player.hand[0]),12-get_card_num_id(self_player.hand[1]))
+            j = min(12-get_card_num_id(self_player.hand[0]),12-get_card_num_id(self_player.hand[1]))
 
             if get_card_suit_id(self_player.hand[0]) == get_card_suit_id(self_player.hand[1]):                   
-                i = min(get_card_num_id(self_player.hand[0]),get_card_num_id(self_player.hand[1]))
-                j = max(get_card_num_id(self_player.hand[0]),get_card_num_id(self_player.hand[1]))
-
+                i = min(12-get_card_num_id(self_player.hand[0]),12-get_card_num_id(self_player.hand[1]))
+                j = max(12-get_card_num_id(self_player.hand[0]),12-get_card_num_id(self_player.hand[1]))
             for row in range(13):
                 for col in range(13):
                     if self.winning_posibility_matrix[i][j] > self.winning_posibility_matrix[row][col]:
-                        win_count += self.matrix[i][j]/self.precentage_sum
+                        win_count += self.matrix[row][col]/self.precentage_sum
                     elif self.winning_posibility_matrix[i][j] == self.winning_posibility_matrix[row][col]:
-                        win_count += 0.5*self.matrix[i][j]/self.precentage_sum
+                        win_count += 0.5*self.matrix[row][col]/self.precentage_sum
             return win_count
 
         for card in public_cards:
@@ -550,7 +589,14 @@ class Matrix:
     def refresh_matrix(self):
         self.matrix = [[1]*(13) for _ in range(13)]
         self.precentage_sum = 13*13
-
+        
+        self.one_pair_position_index = 0.3
+        self.two_pair_position_index = 0.7
+        self.three_of_kind_position_index = 1.0
+        self.straight_position_index = 1.25
+        self.full_house_position_index = 1.5
+        self.four_of_the_kind_position_index = 1.75
+     
 class Player:
     def __init__(self, name: str, position: int, money: int = 10000, tree: NodeClass.RootNode = None, label=None) -> None:
         self.name = name
@@ -742,7 +788,10 @@ class Player:
                 if i.owner != self and i_fold == False:
                     sum_pos += i.return_winning_possibility([], self)
                     player_number += 1
-            win_pos = sum_pos / player_number
+            if player_number == 0:
+                win_pos = 0.5
+            else:
+                win_pos = sum_pos / player_number
         else:
             sum_pos = 0
             player_number = 0
@@ -814,21 +863,30 @@ class Player:
                     p3 = self.p_l[4] / sum / 2 + (1-win_pos)/8
                     p4 = self.p_l[5] / sum / 2 + (1-win_pos)/8
                     p5 = self.p_l[6] / sum / 2 + win_pos/2
+                
+                if p1 < 0 or p2 < 0 or p3 < 0 or p4 < 0 or p5 < 0:
+                    print('小于0---------',win_pos,p1,p2,p3,p4,p5)
+                    p1 = 0.2
+                    p2 = 0.2
+                    p3 = 0.2
+                    p4 = 0.2
+                    p5 = 0.2
+                
                 p = np.array([p1, p2, p3, p4, p5])
                 action_label = np.random.choice([0, 2, 4, 5, 6], p=p.ravel())
         elif self.character == 1:
             if ((max_bet - self.current_bet) == 0):
-                print("Your money: ", self.money, "Current bet: ", max_bet)
+                print("Your money: ", self.money, "Current bet: ", max_bet, "Your hand:", display_hand(self.hand), "Public Card:" , display_hand(self.states[round - 1].public_cards))
                 print("Legal actions: Check, Bet")
                 sum = self.p_l[1] + self.p_l[3]
                 p1 = self.p_l[1] / sum / 2 + (1-win_pos) / 2
                 p2 = self.p_l[3] / sum / 2 + win_pos / 2
                 p1_p = format(p1, '.0%')
                 p2_p = format(p2, '.0%')
-                print("Winning possibliliy:"," Check: ",p1_p, " Bet: ",p2_p)
+                print("Suggested Actions:"," Check: ",p1_p, " Bet: ",p2_p)
                 action_label = int(input("Please input your action (1 for check, 3 for bet):"))
             else:
-                print("Your money:", self.money, "Current bet:", max_bet, "Call money:", float(max_bet - self.current_bet) )
+                print("Your money:", self.money, "Current bet:", max_bet, "You need at least pay:", float(max_bet - self.current_bet), "Your hand:", display_hand(self.hand), "Public Card:" , display_hand(self.states[round - 1].public_cards))
                 print("Legal actions: Fold, Call, Raise 1-3, Raise 3-5, Raise over 5")
                 sum = self.p_l[0] + self.p_l[2] + \
                     self.p_l[4] + self.p_l[5] + self.p_l[6]
@@ -865,31 +923,60 @@ class Player:
                 p1_p = format(p1, '.0%')
                 p2_p = format(p2, '.0%')
                 p3_p = format(p3+p4+p5, '.0%')
-                p4_p = format(p3, '.0%')
-                p5_p = format(p4, '.0%')
-                p6_p = format(p5, '.0%')                
-                print("Winning possibliliy:"," Fold: ",p1_p, " Call: ",p2_p, " Raise: ", p3_p)
+                p4_p = format(p3 / (p3+p4+p5), '.0%')
+                p5_p = format(p4 / (p3+p4+p5), '.0%')
+                p6_p = format(p5 / (p3+p4+p5), '.0%')                
+                print("Suggested Actions:"," Fold: ",p1_p, " Call: ",p2_p, " Raise: ", p3_p)
                 action_label = int(input("Please input your action (0 for fold , 2 for call, 7 for raise):"))
                 if action_label == 7:
-                    print("Winning possibliliy:"," Raise1-3: ",p4_p," Raise3-5: ",p5_p," Raise over 5 ",p6_p)
+                    print("Suggested Actions:"," Raise1-3: ",p4_p," Raise3-5: ",p5_p," Raise over 5 ",p6_p)
                     self.bet_number = int(input("Please input your raise number:"))
+            if action_label == 0:
+                money = self.fold()
+                print("You lose, your rest money: ", self.money)
+                    
 
         # action_label = 4
 
         if action_label == 0:
             money = self.fold()
+            print(self.name,'fold')
         elif action_label == 1:
             money = self.check()
+            print(self.name,'check')
         elif action_label == 2:
             money = self.call(max_bet)
+            if money != -3:
+                print(self.name,'call')
+            else:
+                print(self.name,'allin')
         elif action_label == 3:  # call
             money = self.bet(2)
+            if money != -3:
+                print(self.name,'bet',money)
+            else:
+                print(self.name,'allin')
+            
         elif action_label == 4:
             money = self.Raise(max_bet, 1)
+            if money != -3:
+                print(self.name,'raise',money)
+            else:
+                print(self.name,'allin')
+            
         elif action_label == 5:
             money = self.Raise(max_bet, 3)
+            if money != -3:
+                print(self.name,'raise',money)
+            else:
+                print(self.name,'allin')
+            
         elif action_label == 6:
             money = self.Raise(max_bet, 5)
+            if money != -3:
+                print(self.name,'raise',money)
+            else:
+                print(self.name,'allin')
         elif action_label == 7:
             
             dif = self.bet_number * max_bet - self.current_bet
@@ -908,7 +995,10 @@ class Player:
                 action_label =5
             if  self.bet_number > 5:
                 action_label =6
-
+            if money != -3:
+                print(self.name,'raise',money)
+            else:
+                print(self.name,'allin')
         if round == 1:
 
             self.first_choice = action_label
@@ -922,12 +1012,11 @@ class Player:
             self.fourth_choice = action_label    
         if money > 0:
             self.last_wager = self.current_bet
+            
         return money
 
 
-    def get_max_score(self) -> None:
 
-        return
 
 # p_l = [0.2,0.2,0.2,0.2,0.1,0.06,0.04]
 # sum = p_l[0] + p_l[2] + p_l[4] + p_l[5] + p_l[6]

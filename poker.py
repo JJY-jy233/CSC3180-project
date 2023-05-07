@@ -11,7 +11,7 @@ from util import *
 
 class Game:
 
-    def __init__(self,players_list:list[Player] = [],bigblind:int = 2,smallblind:int = 1) -> None:  
+    def __init__(self,players_list:list[Player] = [],bigblind:int = 10,smallblind:int = 5) -> None:  
         
         # [0~51] 0:2♠ 1:2♥ .... 50: A♦ 51:A♣
         self.cards = [i for i in range(52)]
@@ -105,8 +105,10 @@ class Game:
                     if player != None:
                         # 如果这个玩家赢了
                         if winners[0] == player:
+                            self.end_game(winners[0])
                             return 1
                         else:
+                            self.end_game(winners[0])
                             return 0
                     self.end_game(winners[0])
                     return 0
@@ -119,6 +121,7 @@ class Game:
         # 还没有分出胜负，平分彩池
         if player != None:
             if winners.count(player) == 1:
+                self.chop(winners,player)
                 return len(winners)
         self.chop(winners,player)
         print("chop")
@@ -152,8 +155,11 @@ class Game:
         for i in range(self.players_num):
             self.players[i].position = i
             self.players[i].hand = []
+            for m in self.players[i].matrice:
+                m.refresh_matrix()
             
-            
+        for s in self.states:
+            s.clear()
         
         self.rest_players = self.players.copy()
         self.card_position = 0
@@ -218,6 +224,7 @@ class Game:
         check_last_p = self.rest_players[-1]
         # current_bet = 0
         max_bet = 0
+        self.states[round - 1].rest_players = self.rest_players.copy()
         while len(self.rest_players) !=0:
             
             p = self.rest_players[i]
@@ -233,6 +240,9 @@ class Game:
                 elif simulate == 3: # bet
                     if max_bet > 0: # 别人已经bet了，只能call或者raise
                         return False
+                elif simulate >= 4: # raise
+                    if max_bet == 0: # nobody bet before
+                        return False
                 player_bet = p.action(max_bet,round,simulate)
                 
             
@@ -240,12 +250,12 @@ class Game:
             else:
                 player_bet = p.action(max_bet,round)
             self.pot += max(0,player_bet)
-            
-            for pp in self.rest_players:
-                if pp != p:
-                    for matrix in pp.matrice:
-                        if matrix.owner == p:
-                            if player_bet > 0:
+            if player_bet > 0:
+                for pp in self.rest_players:
+                    if pp != p:
+                        for matrix in pp.matrice:
+                            if matrix.owner == p:
+                            
                                 # print('update',pp.name,'\'s',p.name,'matrix')
                                 # print(player_bet,p.money+player_bet)
                                 
@@ -369,11 +379,11 @@ class Game:
             self.pot += max(0,player_bet)
             self.states[0].round_pot += max(0,player_bet)
             # print("player_bet",player_bet)
-            for pp in self.rest_players:
-                if pp != p:
-                    for matrix in pp.matrice:
-                        if matrix.owner == p:
-                            if player_bet > 0:
+            if player_bet > 0:
+                for pp in self.rest_players:
+                    if pp != p:
+                        for matrix in pp.matrice:
+                            if matrix.owner == p:  
                                 # print('update',pp.name,'\'s',p.name,'matrix')
                                 # print(player_bet,p.money+player_bet)
                                 matrix.first_bet_update(player_bet,p.money + player_bet,p.init_money)
@@ -439,9 +449,12 @@ class Game:
             
     def end_game(self,player:Player) -> None:
         player.money += self.pot
-        # print(player.name,'wins, now have:',player.money)
-        for i in self.players:
-            i.learn()
+        if player.character == 1:
+            print('You wins, now have:',player.money)
+        else:
+            print(player.name, 'wins with hand:' , display_hand(player.hand))
+        # for i in self.players:
+        #     i.learn()
             
     
     def one_play(self):
@@ -467,15 +480,15 @@ class Game:
             
             return
         elif len(self.rest_players) == 0 and len(self.allin) != 0:
-            self.deal_public_cards(3)
-            self.deal_public_cards(1)
-            self.deal_public_cards(1)
+            self.deal_public_cards(3,2)
+            self.deal_public_cards(1,3)
+            self.deal_public_cards(1,4)
             
             self.show_hand()
             return
         
         # 发三张公牌
-        self.deal_public_cards(3,0)
+        self.deal_public_cards(3,2)
         
         # 第二轮下注
         self.action(2)
@@ -484,8 +497,8 @@ class Game:
             self.end_game(self.rest_players[0])
             return
         elif len(self.rest_players) == 0 and len(self.allin) != 0:
-            self.deal_public_cards(1)
-            self.deal_public_cards(1)
+            self.deal_public_cards(1,3)
+            self.deal_public_cards(1,4)
             self.show_hand()
             return
         
@@ -499,7 +512,7 @@ class Game:
             self.end_game(self.rest_players[0])
             return
         elif len(self.rest_players) == 0 and len(self.allin) != 0:
-            self.deal_public_cards(1)
+            self.deal_public_cards(1,4)
             self.show_hand()
             return
         
@@ -525,23 +538,26 @@ class Game:
     def sim_one_game(self):
         self.new_game()
         
-        initial_money=[0] * self.players_num
-        for i in range(self.players_num):
-            initial_money[i] = self.players[i].money
+        # initial_money=[0] * self.players_num
+        # for i in range(self.players_num):
+        #     initial_money[i] = self.players[i].money
             
         self.deal_card()
         self.deal_public_cards(3,2)
         self.deal_public_cards(1,3)
         self.deal_public_cards(1,4)
         # for i in self.players:
-        # i = self.players[0]
+        #     print(i.name)
+        #     MCCFR.simulate_game(self,i,[1000,1000,1000,1000,1000])
+        #     i.tree.nodes[i.hand_num].update()
         MCCFR.simulate_game(self,Jack,[1000,1000,1000,1000,1000])
-        print(Jack.tree.nodes[Jack.hand_num].decisions_p)
         Jack.tree.nodes[Jack.hand_num].update()
-        print(Jack.name,"finish","hand_num:",Jack.hand_num)
-        print(Jack.tree.nodes[Jack.hand_num].decisions_p)
-        Jack.tree.store_p('t1.pkl')
-        print(Jack.tree.nodes[Jack.hand_num].decisions_p)
+        # print(Jack.name,"finish","hand_num:",Jack.hand_num)
+        # print(Jack.tree.nodes[Jack.hand_num].decisions_p)
+        # for oi in range(1,7):
+        #     print(Bob.tree.nodes[Jack.hand_num].decisions[oi].decisions_p)
+        # Jack.tree.store_p('t1.pkl')
+        # print(Jack.tree.nodes[Jack.hand_num].decisions_p)
               
             
 
@@ -551,62 +567,73 @@ class Game:
 
 if __name__ == "__main__":
     
+    filename = 'decision_data.pkl'
     root = NodeClass.RootNode()
-    root.read_p('decision_data.pkl')
+    print('loading',filename)
+    root.read_p(filename)
     print('finish loading')
-    Jack = Player('1',1,1000,root)
-    Bob = Player('2',2,1000,root)
-    Amy = Player('3',3,1000,root)
-    Cat = Player('4',4,1000,root)
-    Dog = Player('5',5,1000,root)
-    Jack_M = Matrix(Jack)
-    Bob_M = Matrix(Bob)
-    Amy_M = Matrix(Amy)
-    Cat_M = Matrix(Cat)
-    Dog_M = Matrix(Dog)
-    matrice = [Jack_M,Bob_M,Amy_M,Cat_M,Dog_M]
+    Jack = Player('Jack',1,1000,root)
+    Bob = Player('Bob',2,1000,root)
+    Amy = Player('Amy',3,1000,root)
+    Cat = Player('Cat',4,1000,root)
+    Dog = Player('Dog',5,1000,root)
+    Jack.character = 1
+    Jack2Bob = Matrix(Bob)
+    Jack2Amy = Matrix(Amy)
+    Jack2Cat = Matrix(Cat)
+    Jack2Dog = Matrix(Dog)
+    Jack.matrice = [Jack2Bob,Jack2Amy,Jack2Cat,Jack2Dog]
+    
+    Bob2Jack = Matrix(Jack)
+    Bob2Amy = Matrix(Amy)
+    Bob2Cat = Matrix(Cat)
+    Bob2Dog = Matrix(Dog)
+    Bob.matrice = [Bob2Jack,Bob2Amy,Bob2Cat,Bob2Dog]
+    
+    Amy2Jack = Matrix(Jack)
+    Amy2Bob = Matrix(Bob)
+    Amy2Cat = Matrix(Cat)
+    Amy2Dog = Matrix(Dog)
+    Amy.matrice = [Amy2Jack,Amy2Bob,Amy2Cat,Amy2Dog]
+    
+    Cat2Jack = Matrix(Jack)
+    Cat2Amy = Matrix(Amy)
+    Cat2Bob = Matrix(Bob)
+    Cat2Dog = Matrix(Dog)
+    Cat.matrice = [Cat2Jack,Cat2Amy,Cat2Bob,Cat2Dog]
+    
+    Dog2Jack = Matrix(Jack)
+    Dog2Amy = Matrix(Amy)
+    Dog2Cat = Matrix(Cat)
+    Dog2Bob = Matrix(Bob)
+    Dog.matrice = [Dog2Jack,Dog2Amy,Dog2Cat,Dog2Bob]
+
     
     players_list = [Jack,Bob,Amy,Cat,Dog]
     game = Game(players_list)
-    for i in game.players:
-        for m in matrice:
-            if i == m.owner:
-                continue
-            i.matrice.append(m)
-    # for i in range(1):
-    #     game.sim_one_game()
-    #     print(format((i+1)/10,".0%"))
-    # root.store_p()
-    
-    # r = NodeClass.RootNode()
-    # r.nodes[0].decisions_p = [1,0,0,0,0,0,0]
-    # r.store_p('t1.pkl')
-    # r.read_p('t1.pkl')
-    # # for i in range(169):
-    # print(r.nodes[0].decisions_p)
-    game.new_game()
-        
-    initial_money=[0] * game.players_num
-    for i in range(game.players_num):
-        initial_money[i] = game.players[i].money
-        
-    game.deal_card()
-    game.deal_public_cards(3,2)
-    game.deal_public_cards(1,3)
-    game.deal_public_cards(1,4)
-    # for i in self.players:
-    # i = self.players[0]
-    MCCFR.simulate_game(game,Jack,[1000,1000,1000,1000,1000])
-    print(Jack.tree.nodes[Jack.hand_num].decisions_p)
-    Jack.tree.nodes[Jack.hand_num].update()
-    print(Jack.name,"finish","hand_num:",Jack.hand_num)
-    print(Jack.tree.nodes[Jack.hand_num].decisions_p)
-    Jack.tree.store_p('t3.pkl')
-    print(Jack.tree.nodes[Jack.hand_num].decisions_p)
-    
-    r = NodeClass.RootNode()
-    r.read_p('t3.pkl')
-    print(r.nodes[Jack.hand_num].decisions_p)
+
+    save_time = 1
+    training_size = 1
+    total_begin = time.time()
+    p_begin = time.time()
+    try:
+        for count in range(1,training_size):
+            game.sim_one_game()
+            if count % 1 == 0:
+                root.store_p(filename)
+                p_end = time.time()
+                print("stored",filename,save_time,'times, this saving costs:',p_end - p_begin,'seconds')
+                p_begin = time.time()
+                save_time+=1
+        total_end = time.time()
+        print("Trained",training_size-1,'times, costs',total_end - total_begin,'seconds')
+    except:
+        root.store_p(filename)
+        print("Error storing")
+    exit = 0
+    while exit != "exit":
+        game.one_play()
+        exit = input(print("Input exit to end game, input anything else to play again"))
 
     
 

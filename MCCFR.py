@@ -2,34 +2,6 @@ import NodeClass
 from Player import Player
 import poker
 
-# def MCCFR(node, i:Player, h, p):
-#     if isinstance(node,NodeClass.ResultNode):  # 如果游戏已经结束
-#         return node.value # 拿utility
-#     elif h.player() == i:   # 如果这是当前玩家的回合
-#         decisions_p = node.decisions_p # 获取当前策略
-#         node_utility = 0
-#         decisions = node.decisions
-#         for a in range(len(decisions_p)):
-#             if a == 0:
-#                 # fold
-#                 pass
-#             i.action(a)
-#             new_p = decisions_p[a] * p
-#             node = decisions[a]
-#             next_h = game.do_action(h, a)
-#             node_utility += MCCFR(node, i, next_h, new_p)
-#             regret = node_utility - MCCFR(node, i, h, p)
-#             update_regret_sum(node, i, h, a, regret)
-#         return node_utility
-#     else:                   # 如果这不是当前玩家的回合
-#         strategy = get_average_strategy(node, i, h)   # 获取平均策略
-#         a = choose_action(strategy)          # 根据平均策略选择动作
-#         return MCCFR(node, i, game.do_action(h, a), p)
-    
-    
-# def update_regret_sum(node,i,h,a,regret):
-#     pass
-
 
 def simulate_game(game:poker.Game,player:Player,ini_money:list):
     players_original_money = [0] * game.players_num
@@ -83,7 +55,7 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
         game.rest_players = game.players.copy()
         # print(i,game.rest_players)
 
-        # 重置玩家的钱
+        # 重置玩家的钱, 本轮下注，矩阵
         for i1 in range(game.players_num):
             game.players[i1].money = players_original_money[i1]
             game.players[i1].current_bet = c_bet[i1]
@@ -157,7 +129,7 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
         
         # round 2
         for j in range(7):
-            print(format(((i*7+j) / (7*7+7)) , '.0%'))
+            # print(format(((i*7+j) / (7*7+7)) , '.0%'))
             print('j',j)
             # print(i,j,k,l)
             # node = player.tree.nodes[player.hand_num].decisions[i].decisions
@@ -321,8 +293,6 @@ def simulate_game(game:poker.Game,player:Player,ini_money:list):
                 # round 4
                 for l in range(7):
                     print('l',l)
-                    if i == 2 and j==4 and k == 6 and l ==6:
-                        print(i,j,k,l)
                     # print(player.tree.nodes[player.hand_num].decisions[6].decisions[4].decisions[4].decisions[3].value)
                     
                     # if(i == 2 and j == 2 and k == 2):
